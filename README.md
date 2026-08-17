@@ -27,8 +27,28 @@ pnpm build    # static site into dist/
 
 ## Source of truth
 
-The deck is authored in the main candidacy research repo
-(`talk/slidev/`), where `public/figures` is a symlink to `../../figures`. This
-repository is a deploy-only copy: to update the published slides, copy
-`slides.md`, `components/`, `layouts/`, and `style.css` across, add any new
-referenced figures under `public/figures/`, and push.
+The deck is authored in the main candidacy research repo (`talk/slidev/`),
+where `public/figures` is a symlink to `../../figures`. This repository is a
+deploy-only copy.
+
+To update the published slides:
+
+1. Copy `slides.md`, `layouts/`, and `style.css` across.
+2. Copy `components/` across **except `CropVideo.vue`** — see the warning below.
+3. Add any newly referenced figures under `public/figures/` (real files, not a
+   symlink — CI has no access to the research repo).
+4. Commit and push; the workflow rebuilds and redeploys.
+
+> **Do not overwrite `components/CropVideo.vue` from the source repo.** This
+> copy carries the `import.meta.env.BASE_URL` fix described above, and the
+> source repo's version does not. Overwriting it makes the gameplay video 404
+> on the deployed site while still working locally — a silent regression.
+>
+> The cleaner long-term fix is to port that change back into the source repo's
+> `CropVideo.vue`; it is a no-op in local development, where `BASE_URL` is `/`.
+
+After any deploy, confirm the at-risk asset actually resolves:
+
+```bash
+curl -sI https://nssokada.github.io/candidacy-talk/figures/02-study1-foraging/gameplay_winloss.mp4 | head -1
+```
