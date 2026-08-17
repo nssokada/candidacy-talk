@@ -77,11 +77,6 @@ section: "Background"
   </div>
 </div>
 
-<template #references>
-Lima & Dill (1999); Lima et al. (1985)
-</template>
-
-
 <!--
 THREE-CLICK BUILD, additive — the squirrel never moves.
   click 0  the forager alone, sitting low in the frame
@@ -166,7 +161,7 @@ clicks: 3
 </div>
 
 <template #references>
-Bednekoff (2007); Lima & Dill (1999)
+Bednekoff (2007)
 </template>
 
 <style>
@@ -1870,7 +1865,7 @@ section: "STUDY 1 · FORAGING"
   <strong>Effort and threat are integrated within a common valuation process</strong>, such that effort costs depend on the danger incurred while acting.
 </div>
 
-<div style="margin-top: 2.4rem; display: flex; gap: 0.75rem;">
+<div v-click="1" style="margin-top: 2.4rem; display: flex; gap: 0.75rem;">
   <div style="flex: none; font-size: 1.1rem; line-height: 1.45; color: #9b8ec4;">•</div>
   <div>
     <div style="font-size: 1.1rem; line-height: 1.45; color: #1a1a1a;">
@@ -1882,7 +1877,7 @@ section: "STUDY 1 · FORAGING"
   </div>
 </div>
 
-<div style="margin-top: 2rem; display: flex; gap: 0.75rem;">
+<div v-click="2" style="margin-top: 2rem; display: flex; gap: 0.75rem;">
   <div style="flex: none; font-size: 1.1rem; line-height: 1.45; color: #9b8ec4;">•</div>
   <div>
     <div style="font-size: 1.1rem; line-height: 1.45; color: #1a1a1a;">
@@ -1894,7 +1889,7 @@ section: "STUDY 1 · FORAGING"
   </div>
 </div>
 
-<div style="margin-top: 2.6rem; font-size: 0.85rem; color: #6b7280;">
+<div v-click="3" style="margin-top: 2.6rem; font-size: 0.85rem; color: #6b7280;">
   Preregistered <em>N</em> = 518 · replication sample planned, <em>n</em> = 800
 </div>
 
@@ -1903,10 +1898,18 @@ section: "STUDY 1 · FORAGING"
 S2.18b. 60 s. NEW 2026-08-16 (D13) — the interpretation beat the take-home was
 missing. Budget: +1 min on §2, paid out of §4 (4 → 3 min).
 
+FOUR-BEAT BUILD, additive — the claim frames, the bullets land one at a time:
+  click 0  title + the INTEGRATION CLAIM (left bar). Read it, then pause.
+  click 1  APATHY bullet
+  click 2  ANXIETY bullet
+  click 3  preregistration / replication line
+
 TAKEAWAY. Effort and threat are integrated into one value computation, and
 affect enters at identifiable places inside it.
 
-NO FIGURE HERE, deliberately. This is the beat where they look at you.
+NO FIGURE HERE, deliberately. This is the beat where they look at you — and
+now it is FOUR beats, not one. Say each bullet before you click the next in;
+do not let the build outrun the sentence.
 
 SPOKEN, NOT ON THE SLIDE:
 
@@ -1992,14 +1995,15 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
-<!-- <Roadmap :active="2" /> -->
+<Roadmap :active="2" />
 
 # Functionalist premise
 
-<div class="wet-sub">Emotion as a causal functional state</div>
+<div class="wet-sub">Emotion as a causal role</div>
 
 <div class="wet-intro">
 
+On Adolphs & Andler (2018): emotions are **central states individuated by their causal connections** — to the conditions that elicit them, and to what they go on to change.
 
 </div>
 
@@ -2062,9 +2066,11 @@ Choice, vigor, reports, physiology
 
 </div>
 
-<template #references>
-Sofroniew et al. (2026); Adolphs & Anders (2018)
-</template>
+<div class="wet-bar" v-click="4">
+
+The object of study is a **causal role** — the state biases cognition and behavior **in parallel**.
+
+</div>
 
 <style>
 /*
@@ -2208,11 +2214,11 @@ We do not <span class="wet-red">read</span> or <span class="wet-red">set</span> 
 
 </div>
 
-<!-- <div class="wet-bar" v-click="5">
+<div class="wet-bar" v-click="5">
 
 Humans: we infer the state from its **causes** and its **consequences**.
 
-</div> -->
+</div>
 
 <style>
 /*
@@ -2388,7 +2394,7 @@ The vector is a *candidate representation* playing an *emotion-like* functional 
 </div>
 
 <template #references>
-Sofroniew et al. (2026);
+Adolphs & Anderson (2018) · Adolphs & Andler (2018)
 </template>
 
 <style>
@@ -2604,12 +2610,13 @@ section: "STUDY 2 · LLM"
 
 # Task
 
-<div class="flex justify-center items-center" style="height: 410px;">
-  <img src="/figures/03-llm-emotion/FID_Task.png" alt="Flight-initiation-distance task schematic" style="max-height: 410px; max-width: 100%; width: auto;" />
+<div class="flex justify-center items-center gap-6" style="height: 410px;">
+  <img src="/figures/03-llm-emotion/FID_Task.png" alt="Flight-initiation-distance task schematic" style="flex: 0 1 auto; max-height: 300px; max-width: 46%; width: auto;" />
+  <img src="/figures/03-llm-emotion/FID_Task_Prompt.png" alt="The literal prompt the model receives on each turn" style="flex: 0 1 auto; max-height: 410px; max-width: 50%; width: auto;" />
 </div>
 
 <!--
-S3.4. 1 min. The literal prompt shown to the model is now a backup slide.
+S3.4. 1 min. Schematic left, the literal prompt the model receives right.
 
 TAKEAWAY. A flight-initiation-distance task from behavioral ecology, with
 earnings traded against capture.
@@ -2744,7 +2751,7 @@ section: "STUDY 2 · LLM"
   <strong>Emotion concepts are linearly represented in the agent's activation space</strong>, and intervening on that representation changes what the agent does.
 </div>
 
-<div style="margin-top: 1.8rem; display: flex; gap: 0.75rem;">
+<div v-click="1" style="margin-top: 1.8rem; display: flex; gap: 0.75rem;">
   <div style="flex: none; font-size: 1.1rem; line-height: 1.45; color: #d09aa4;">•</div>
   <div>
     <div style="font-size: 1.1rem; line-height: 1.45; color: #1a1a1a;">
@@ -2756,7 +2763,7 @@ section: "STUDY 2 · LLM"
   </div>
 </div>
 
-<div style="margin-top: 1.7rem; display: flex; gap: 0.75rem;">
+<div v-click="2" style="margin-top: 1.7rem; display: flex; gap: 0.75rem;">
   <div style="flex: none; font-size: 1.1rem; line-height: 1.45; color: #d09aa4;">•</div>
   <div>
     <div style="font-size: 1.1rem; line-height: 1.45; color: #1a1a1a;">
@@ -2768,25 +2775,25 @@ section: "STUDY 2 · LLM"
   </div>
 </div>
 
-<div style="margin-top: 1.6rem; font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: #a86b78;">
+<div v-click="3" style="margin-top: 1.6rem; font-size: 0.7rem; letter-spacing: 0.09em; text-transform: uppercase; color: #a86b78;">
   Planned
 </div>
 
-<div style="margin-top: 0.8rem; display: flex; gap: 0.75rem; align-items: baseline;">
+<div v-click="3" style="margin-top: 0.8rem; display: flex; gap: 0.75rem; align-items: baseline;">
   <div style="flex: none; width: 0.6rem; height: 0.6rem; border: 1.5px solid #d09aa4; border-radius: 50%;"></div>
   <div style="font-size: 1rem; line-height: 1.45; color: #5b6472; font-style: italic;">
     Perturb the threat representation across <strong style="color: #5b6472; font-style: italic;">temporal and spatial features</strong> of the approach
   </div>
 </div>
 
-<div style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: baseline;">
+<div v-click="4" style="margin-top: 0.75rem; display: flex; gap: 0.75rem; align-items: baseline;">
   <div style="flex: none; width: 0.6rem; height: 0.6rem; border: 1.5px solid #d09aa4; border-radius: 50%;"></div>
   <div style="font-size: 1rem; line-height: 1.45; color: #5b6472; font-style: italic;">
     Impose <strong style="color: #5b6472; font-style: italic;">token-level effort constraints</strong> to test risk-sensitive foraging in agents
   </div>
 </div>
 
-<div style="margin-top: 1.1rem; font-size: 0.85rem; color: #6b7280;">
+<div v-click="5" style="margin-top: 1.1rem; font-size: 0.85rem; color: #6b7280;">
   Gemma-2-9B · pilot complete
 </div>
 
@@ -2794,6 +2801,18 @@ section: "STUDY 2 · LLM"
 <!--
 S3.7b. 60 s. The Chapter 2 take-home, mirroring S2.18b at the end of Chapter 1 —
 same slide shape, same job: no figure, the beat where they look at you.
+
+SIX-BEAT BUILD, additive:
+  click 0  title + the LINEAR-REPRESENTATION CLAIM (left bar)
+  click 1  RECOVERABLE bullet — geometry matches human norms, graded along imminence
+  click 2  INTERVENTION bullet — danger judgment and choice move together
+  click 3  "PLANNED" label + the PERTURBATION ring. The label arrives WITH its
+           first ring, never after it — no open ring is ever on screen unlabelled.
+  click 4  TOKEN-LEVEL EFFORT ring
+  click 5  Gemma-2-9B / pilot-complete line
+
+The click counts differ from S2.18b (5 vs 3). The mirror is the slide SHAPE, not
+the beat count.
 
 TAKEAWAY. Emotion concepts are linearly represented in the agent, and
 intervening on that representation moves behavior and report together.
@@ -3033,16 +3052,18 @@ S5.3. 1 min. THE CLOSING SLIDE — the plan, on a clock.
 BUILD, 5 clicks (ThesisTimeline component):
 0. The proposal view, exactly as slide 6 left it — three chapters, three
    questions, three statuses. Say nothing new here; it is a callback.
-1. The cards ride up and shed their questions; the Aug 2026 – Dec 2027 axis
+1. The cards ride up and shed their questions; the Aug 2026 – Mar 2028 axis
    draws in underneath.
 2. Chapter 1 lights: replication sample Sep 2026, manuscript out Nov 2026.
-3. Chapter 2 lights: workshop submission Sep 2026, NeurIPS May 2027.
+3. Chapter 2 lights: workshop submission Sep 2026, manuscript submission
+   May 2027.
 4. Chapter 3 lights: VR pilot Dec 2026, collection complete Mar 2027,
-   manuscript Nov 2027.
-5. Cards go neutral; thesis draft Aug 2027, then DEFENSE Dec 2027, then the
+   manuscript submitted Nov 2027.
+5. Cards go neutral; thesis draft Oct 2027, then the DEFENSE window
+   Dec 2027 – Mar 2028, then the
    legend.
 
-TAKEAWAY. Three chapters, sixteen months, and a defense date.
+TAKEAWAY. Three chapters, nineteen months, and a defense window.
 
 DELIVERY. Land on click 5 and stop talking. The last dot is the answer to
 "when," which is the question the committee actually has left.
@@ -3728,8 +3749,8 @@ section: "BACKUP"
 </div>
 
 <!--
-The literal prompt. Was an inset on "A flight decision with real stakes"; pull
-it up if anyone asks exactly what the model was told.
+The literal prompt, full size. It now also sits on the main task slide (S3.4)
+next to the schematic; pull this up if anyone wants to read it in detail.
 -->
 
 ---

@@ -12,7 +12,7 @@
       class="tl"
       :viewBox="`0 0 ${VB_W} ${VB_H}`"
       role="img"
-      aria-label="Project timeline from August 2026 to December 2027, with chapter milestones and the thesis defense"
+      aria-label="Project timeline from August 2026 to March 2028, with chapter milestones and a thesis defense window of December 2027 to March 2028"
     >
       <!-- axis -->
       <line
@@ -28,28 +28,43 @@
         class="ms"
         :class="[`c${m.chapter}`, { 'is-on': stage >= m.reveal, 'is-emph': m.emphasis }]"
       >
+        <!-- A milestone with `monthEnd` is a window, not a date: a band along the
+             axis from its opening to its close. The stem and label hang from the
+             band's midpoint; the emphasis dot stays on the closing month. -->
+        <line
+          v-if="m.xEnd"
+          class="range"
+          :x1="m.x" :y1="AXIS_Y" :x2="m.xEnd" :y2="AXIS_Y"
+          :style="{ '--len': m.rangeLen, transitionDelay: delay(m, 0) }"
+        />
         <line
           class="stem"
-          :x1="m.x" :y1="AXIS_Y" :x2="m.x" :y2="m.stemEnd"
+          :x1="m.labelX" :y1="AXIS_Y" :x2="m.labelX" :y2="m.stemEnd"
           :style="{ '--len': m.stemLen, transitionDelay: delay(m, 120) }"
         />
         <circle
+          v-if="m.xEnd"
+          class="dot cap"
+          :cx="m.x" :cy="AXIS_Y" r="5"
+          :style="{ transitionDelay: delay(m, 0) }"
+        />
+        <circle
           class="dot"
-          :cx="m.x" :cy="AXIS_Y" :r="m.emphasis ? 7 : 5"
+          :cx="m.dotX" :cy="AXIS_Y" :r="m.emphasis ? 7 : 5"
           :style="{ transitionDelay: delay(m, 0) }"
         />
         <circle
           v-if="m.emphasis"
           class="pulse"
-          :cx="m.x" :cy="AXIS_Y" r="7"
+          :cx="m.dotX" :cy="AXIS_Y" r="7"
         />
         <g class="label" :style="{ transitionDelay: delay(m, 240) }">
-          <text class="ms-date" :x="m.x" :y="m.dateY" text-anchor="middle">{{ m.date }}</text>
+          <text class="ms-date" :x="m.labelX" :y="m.dateY" text-anchor="middle">{{ m.date }}</text>
           <text
             v-for="(t, i) in m.label"
             :key="t"
             class="ms-desc"
-            :x="m.x"
+            :x="m.labelX"
             :y="m.descY[i]"
             text-anchor="middle"
           >{{ t }}</text>
@@ -91,7 +106,7 @@ const AXIS_R = 812
 const AXIS_W = AXIS_R - AXIS_L
 const AXIS_Y = 136
 const LEGEND_Y = 292
-const SPAN = 16 // months from Aug 2026 (0) to Dec 2027 (16)
+const SPAN = 19 // months from Aug 2026 (0) to Mar 2028 (19)
 
 // Where a label block sits, per side and tier. `above` blocks are positioned by
 // their bottom edge and grow upward; `below` blocks by their top edge.
@@ -112,12 +127,12 @@ const RAW = [
   { id: 'ch1-sample',   chapter: 1, month: 1,  date: 'Sep 2026', label: ['Replication', 'sample collected'], side: 'below', tier: 1 },
   { id: 'ch1-ms',       chapter: 1, month: 3,  date: 'Nov 2026', label: ['Ch1 manuscript', 'submitted'],     side: 'below', tier: 2 },
   { id: 'ch2-workshop', chapter: 2, month: 1,  date: 'Sep 2026', label: ['NeurIPS/ICLR', 'workshop sub.'],   side: 'above', tier: 1 },
-  { id: 'ch2-neurips',  chapter: 2, month: 9,  date: 'May 2027', label: ['NeurIPS', 'submission'],           side: 'above', tier: 1 },
+  { id: 'ch2-ms',       chapter: 2, month: 9,  date: 'May 2027', label: ['Manuscript', 'submission'],        side: 'above', tier: 1 },
   { id: 'ch3-pilot',    chapter: 3, month: 4,  date: 'Dec 2026', label: ['VR pilot data'],                   side: 'above', tier: 2 },
   { id: 'ch3-collect',  chapter: 3, month: 7,  date: 'Mar 2027', label: ['VR data collection', 'complete'],  side: 'below', tier: 1 },
-  { id: 'ch3-ms',       chapter: 3, month: 15, date: 'Nov 2027', label: ['Ch3 manuscript', 'preparation'],   side: 'above', tier: 1 },
-  { id: 'thesis-draft', chapter: 0, month: 12, date: 'Aug 2027', label: ['Thesis draft'],                    side: 'below', tier: 1 },
-  { id: 'defense',      chapter: 0, month: 16, date: 'Dec 2027', label: ['Defense'],                         side: 'below', tier: 1, emphasis: true },
+  { id: 'ch3-ms',       chapter: 3, month: 15, date: 'Nov 2027', label: ['Ch3 manuscript', 'submission'],    side: 'above', tier: 1 },
+  { id: 'thesis-draft', chapter: 0, month: 14, date: 'Oct 2027', label: ['Thesis draft'],                    side: 'below', tier: 1 },
+  { id: 'defense',      chapter: 0, month: 16, monthEnd: 19, date: 'Dec 2027 – Mar 2028', label: ['Defense'], side: 'below', tier: 1, emphasis: true },
 ]
 
 // Two milestones share Sep 2026; nudge their dots apart so the axis reads as two
@@ -130,9 +145,16 @@ const milestones = RAW.map((m) => {
   const slot = SLOTS[`${m.side}-${m.tier}`]
   const blockH = DATE_H + LINE_H * m.label.length + 3
   const top = m.side === 'above' ? slot.edge - blockH : slot.edge
+  const x = AXIS_L + (m.month / SPAN) * AXIS_W + (DODGE[m.id] || 0)
+  const xEnd = m.monthEnd == null ? null : AXIS_L + (m.monthEnd / SPAN) * AXIS_W
   return {
     ...m,
-    x: AXIS_L + (m.month / SPAN) * AXIS_W + (DODGE[m.id] || 0),
+    x,
+    xEnd,
+    rangeLen: xEnd == null ? 0 : xEnd - x,
+    // a window's dot marks its close; a point milestone's marks itself
+    dotX: xEnd == null ? x : xEnd,
+    labelX: xEnd == null ? x : (x + xEnd) / 2,
     stemEnd: slot.stemEnd,
     stemLen: Math.abs(AXIS_Y - slot.stemEnd),
     dateY: top + DATE_H,
@@ -249,6 +271,27 @@ function delay(m, offset) {
   stroke-width: 2;
 }
 
+/* The window band. Same draw-in trick as the stems, running left to right along
+   the axis, and light enough that the axis reads through it. */
+.range {
+  stroke: var(--hue);
+  stroke-width: 6;
+  stroke-linecap: round;
+  opacity: 0.4;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  transition: stroke-dashoffset 420ms ease;
+}
+
+.ms.is-on .range {
+  stroke-dashoffset: 0;
+}
+
+/* The opening cap of a window is a plain dot — only the close carries emphasis. */
+.cap {
+  stroke-width: 1.5;
+}
+
 /* One dash the length of the whole stem, offset out of view, so the stem draws
    from the dot outward — every stem's x1,y1 is the axis end. */
 .stem {
@@ -345,6 +388,7 @@ function delay(m, offset) {
   .year,
   .dot,
   .stem,
+  .range,
   .label,
   .legend {
     transition-duration: 150ms !important;
@@ -360,6 +404,9 @@ function delay(m, offset) {
 
   .stem { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; transition-property: opacity; }
   .ms.is-on .stem { opacity: 0.75; }
+
+  .range { stroke-dasharray: none; stroke-dashoffset: 0; opacity: 0; transition-property: opacity; }
+  .ms.is-on .range { opacity: 0.4; }
 
   .dot { transform: scale(1); opacity: 0; transition-property: opacity; }
   .ms.is-on .dot { opacity: 1; }
