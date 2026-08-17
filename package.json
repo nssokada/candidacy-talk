@@ -1,0 +1,21 @@
+{
+  "name": "candidacy-talk",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export",
+    "export-pdf": "slidev export --format pdf --with-clicks"
+  },
+  "dependencies": {
+    "@slidev/cli": "51.8.0",
+    "@slidev/theme-default": "0.25.0",
+    "@slidev/theme-seriph": "0.25.0",
+    "vue": "^3.5.14",
+    "@iconify-json/carbon": "^1.2.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}

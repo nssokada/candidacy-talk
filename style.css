@@ -1,0 +1,471 @@
+/* Import Inter and alternative serif fonts from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Crimson+Pro:wght@400;500;600;700&display=swap');
+
+/* Alternative option: Use Crimson Pro (free, similar to Tiempos) */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Source+Serif+4:wght@400;500;600;700&display=swap'); */
+
+/* If you have Tiempos license, add your font files to a /public/fonts/ folder */
+/* @font-face {
+  font-family: 'Tiempos Text';
+  src: url('/fonts/TiemposTextWeb-Regular.woff2') format('woff2'),
+       url('/fonts/TiemposTextWeb-Regular.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url('/fonts/TiemposTextWeb-Medium.woff2') format('woff2'),
+       url('/fonts/TiemposTextWeb-Medium.woff') format('woff');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tiempos Text';
+  src: url('/fonts/TiemposTextWeb-Semibold.woff2') format('woff2'),
+       url('/fonts/TiemposTextWeb-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-display: swap;
+} */
+
+/* Define CSS variables for your fonts */
+:root {
+  /* Option 1: With Tiempos (requires license) */
+  --slidev-font-family-title: 'Tiempos Text', 'Crimson Pro', Georgia, serif;
+  
+  /* Option 2: Free alternative - uncomment this and comment out the line above */
+  /* --slidev-font-family-title: 'Crimson Pro', Georgia, serif; */
+  
+  /* Option 3: Another free alternative */
+  /* --slidev-font-family-title: 'Source Serif 4', Georgia, serif; */
+  --slidev-font-family-text: 'Inter', 'Helvetica Neue', 'Helvetica', system-ui, -apple-system, sans-serif;
+}
+
+/* Apply Lora to all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--slidev-font-family-title) !important;
+  font-weight: 600;
+}
+
+/* Main title styling */
+h1 {
+  font-weight: 700;
+}
+
+/* Subtitle styling */
+h2 {
+  font-weight: 500;
+}
+
+/* Apply light sans-serif to body text */
+p, li, span, div, .slidev-layout {
+  font-family: var(--slidev-font-family-text) !important;
+  font-weight: 300; /* Light weight */
+  line-height: 1.6;
+}
+
+/* Extra light option */
+.text-extralight {
+  font-weight: 200 !important;
+}
+
+/* Light text styling */
+.text-light {
+  font-weight: 300 !important;
+}
+
+/* Regular weight */
+.text-regular {
+  font-weight: 400 !important;
+}
+
+/* Bold text styling */
+strong, b, .font-bold, .text-bold {
+  font-weight: 600 !important;
+}
+
+/* Very bold for extra emphasis */
+.text-extrabold {
+  font-weight: 700 !important;
+}
+
+/* Font family utility classes */
+.title-font {
+  font-family: var(--slidev-font-family-title) !important;
+}
+
+.body-font {
+  font-family: var(--slidev-font-family-text) !important;
+}
+
+/* Override Slidev defaults more specifically */
+.slidev-layout p,
+.slidev-layout li,
+.slidev-layout div:not([class*="carbon"]):not([class*="icon"]) {
+  font-family: var(--slidev-font-family-text) !important;
+  font-weight: 300 !important;
+}
+
+/* Ensure list items are light */
+ul li, ol li {
+  font-weight: 300 !important;
+}
+
+/* Make sure buttons and interactive elements don't inherit light weight */
+button, .slidev-icon-btn, .slidev-nav {
+  font-weight: 400 !important;
+}
+
+/* ---------------------------------------------------------------------------
+   KATEX — give the math back its own fonts.
+
+   The rules above set `font-family: Inter !important` on every span and div, and
+   an `!important` author rule beats KaTeX's own stylesheet no matter how the
+   cascade is ordered. Without this block, every equation in the deck renders in
+   Inter: the layout (fractions, stretchy delimiters, script positioning) is
+   still correct, but the glyphs are wrong and it stops looking like typeset
+   mathematics.
+
+   The fix is specificity, not ordering: `.katex span` (0,1,1) outranks the bare
+   `span` (0,0,1) selector, and the per-class rules (0,2,0) outrank that in turn,
+   so KaTeX's own font assignments are reproduced here one for one. Deliberately
+   NOT done by narrowing the global rule with `:not(.katex *)` — if that complex
+   `:not()` ever failed to parse, the whole selector list would be dropped and
+   every slide in the deck would lose its typography at once. This block can only
+   ever affect subtrees inside `.katex`.
+
+   Keep this in sync with katex.css if the KaTeX version changes.
+   --------------------------------------------------------------------------- */
+.katex {
+  font-family: KaTeX_Main, 'Times New Roman', serif !important;
+}
+
+/* catch-all: unclassed spans inherit from the nearest classed ancestor */
+.katex span {
+  font-family: inherit !important;
+  font-weight: inherit;
+  line-height: normal;
+}
+
+.katex .mathnormal { font-family: KaTeX_Math !important; font-style: italic; }
+.katex .mathit { font-family: KaTeX_Main !important; font-style: italic; }
+.katex .mathrm { font-family: KaTeX_Main !important; font-style: normal; }
+.katex .mathbf { font-family: KaTeX_Main !important; font-weight: bold !important; }
+.katex .boldsymbol { font-family: KaTeX_Math !important; font-weight: bold !important; font-style: italic; }
+.katex .amsrm { font-family: KaTeX_AMS !important; }
+.katex .mathbb, .katex .textbb { font-family: KaTeX_AMS !important; }
+.katex .mathcal { font-family: KaTeX_Caligraphic !important; }
+.katex .mathfrak, .katex .textfrak { font-family: KaTeX_Fraktur !important; }
+.katex .mathtt { font-family: KaTeX_Typewriter !important; }
+.katex .mathscr, .katex .textscr { font-family: KaTeX_Script !important; }
+.katex .mathsf, .katex .textsf { font-family: KaTeX_SansSerif !important; }
+.katex .textrm { font-family: KaTeX_Main !important; }
+.katex .textit { font-family: KaTeX_Main !important; font-style: italic; }
+.katex .textbf { font-family: KaTeX_Main !important; font-weight: bold !important; }
+
+.katex .delimsizing.size1 { font-family: KaTeX_Size1 !important; }
+.katex .delimsizing.size2 { font-family: KaTeX_Size2 !important; }
+.katex .delimsizing.size3 { font-family: KaTeX_Size3 !important; }
+.katex .delimsizing.size4 { font-family: KaTeX_Size4 !important; }
+.katex .delim-size1 > span { font-family: KaTeX_Size1 !important; }
+.katex .delim-size4 > span { font-family: KaTeX_Size4 !important; }
+.katex .op-symbol.small-op { font-family: KaTeX_Size1 !important; }
+.katex .op-symbol.large-op { font-family: KaTeX_Size2 !important; }
+/* ---------------------------------------------------------------------------
+   Zoom transition for the Study 1 task walkthrough (slides 8-10).
+
+   This is a VUE TRANSITION, not a CSS animation on mount. Slidev keeps several
+   slides mounted at once, so a mount-triggered `animation` has already finished
+   before you ever navigate to the slide — you see nothing. A named transition
+   fires on slide *entry*, which is what we actually want.
+
+   Referenced as `transition: zoom-fig` in those slides' frontmatter.
+   --------------------------------------------------------------------------- */
+.zoom-fig-enter-active {
+  transition:
+    transform 620ms cubic-bezier(0.16, 0.84, 0.44, 1),
+    opacity 380ms ease;
+}
+
+.zoom-fig-enter-from {
+  transform: scale(0.82);
+  opacity: 0;
+}
+
+.zoom-fig-leave-active {
+  transition: opacity 300ms ease;
+}
+
+.zoom-fig-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom-fig-enter-active,
+  .zoom-fig-leave-active {
+    transition: none;
+  }
+}
+
+/* Pull-back companion to zoom-fig: the arriving slide starts LARGER than the
+   frame and settles to 1, so returning to the whole task reads as zooming out
+   of the detail rather than into it. Sits on the frontmatter of the slide you
+   are leaving (i.e. on each zoom slide). */
+.zoom-out-fig-enter-active {
+  transition:
+    transform 620ms cubic-bezier(0.16, 0.84, 0.44, 1),
+    opacity 380ms ease;
+}
+
+.zoom-out-fig-enter-from {
+  transform: scale(1.28);
+  opacity: 0;
+}
+
+.zoom-out-fig-leave-active {
+  transition: opacity 300ms ease;
+}
+
+.zoom-out-fig-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom-out-fig-enter-active,
+  .zoom-out-fig-leave-active {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hide the "go to slide" quick-search dialog while it is closed.
+
+   Slidev closes it by sliding it up 5rem (`-top-20`), but the panel is ~670px
+   tall, so ~590px of the slide list stays on screen over the right-hand third
+   of every slide. Hiding only the closed state keeps the `g` shortcut working —
+   when open it carries `top-5` instead and this rule does not match.
+   --------------------------------------------------------------------------- */
+#slidev-goto-dialog[class*="-top-20"] {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   WHY-EMOTION-THEORY — the four-slide argument that opens Study 2 (S3.1a–d,
+   slides 28-31: functionalist premise, what Study 1 can establish, why not just
+   neuroscience, why a language model). Spec: talk/figures/03-llm-emotion/
+   why_emotion_theory.md.
+
+   Defined ONCE here rather than repeated in four per-slide style blocks, since
+   all four share the same box / tag / bar system. Everything is prefixed `wet-`,
+   so nothing here can reach another slide. Per-slide GEOMETRY (column widths,
+   row heights, the fan) stays in each slide's own style block.
+
+   PALETTE: every hex below already appears elsewhere in slides.md. This is the
+   deck's muted accent family, NOT the bright Tailwind-400s the original spec
+   drafted -- #2f855a green, #2b6cb0 blue, #9b8ec4 purple, #b7791f amber,
+   #c53030 red, on #d7dbe0 hairlines.
+
+   BOX CONSTRUCTION: white fill, 1px #d7dbe0 hairline, 3px radius, and a 3px
+   accent rule on the LEFT edge carrying the family identity. That is slide 26's
+   emphasis idiom crossed with slide 19's badge treatment. Deliberately not
+   tinted fills with 12px radii -- there is no object in this deck that looks
+   like that.
+
+   WHY THE TAGS ARE SPANS, NOT DIVS. academic-content.vue carries
+   `font-weight: 300 !important` on a div selector specific enough (0,4,1) to
+   beat a bare `.wet-tag` even with !important. The same rule does not name
+   spans, so a span at (0,1,0) with !important wins. This is why `.mtag` on
+   slide 19 is a span too. If a tag is ever changed to a div it will silently
+   render at weight 300.
+   --------------------------------------------------------------------------- */
+
+.wet-sub {
+  margin-top: -0.55rem;
+  margin-bottom: 1.05rem;
+  font-size: 1rem;
+  color: #5b6472;
+  line-height: 1.4;
+}
+
+.wet-intro {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #2d3748;
+  margin-bottom: 0.95rem;
+}
+
+.wet-intro p {
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  color: #2d3748 !important;
+}
+
+.wet-intro strong { color: #1a1a1a; }
+
+/* the diagram row: stretch, not center, so boxes in a row are equal height */
+.wet-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.wet-box {
+  border: 1px solid #d7dbe0;
+  border-left: 3px solid #9aa0ab;
+  border-radius: 3px;
+  background: #ffffff;
+  padding: 0.62rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* without this a long line sets the min-content width and pushes the row
+     wider than the 884px content area */
+  min-width: 0;
+}
+
+.wet-box p {
+  margin: 0 !important;
+  font-size: 0.86rem !important;
+  line-height: 1.5 !important;
+  color: #2d3748 !important;
+}
+
+.wet-box p + p { margin-top: 0.26rem !important; }
+
+.wet-tag {
+  display: block;
+  font-size: 0.61rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa0ab;
+  line-height: 1.35;
+  margin-bottom: 0.42rem;
+}
+
+.wet-green  { border-left-color: #2f855a; }
+.wet-blue   { border-left-color: #2b6cb0; }
+.wet-purple { border-left-color: #9b8ec4; }
+.wet-amber  { border-left-color: #b7791f; }
+
+.wet-green  .wet-tag { color: #2f855a; }
+.wet-blue   .wet-tag { color: #2b6cb0; }
+.wet-purple .wet-tag { color: #7c6fa8; }
+.wet-amber  .wet-tag { color: #b7791f; }
+
+/* the latent state on slide 29: dashed because it is inferred, not observed */
+.wet-latent {
+  border: 1.5px dashed #b0b5bd;
+  border-radius: 3px;
+  background: #f8f8f9;
+  align-items: center;
+  text-align: center;
+}
+
+.wet-latent .wet-tag { color: #9aa0ab; }
+
+.wet-qmark {
+  font-size: 2.2rem;
+  line-height: 1;
+  color: #b0b5bd;
+  margin: 0.35rem 0 0.4rem;
+}
+
+/* the deck has no SVG arrowheads anywhere and uses this glyph 81 times */
+.wet-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  font-size: 1.35rem;
+  color: #5b6472;
+}
+
+.wet-cap {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+.wet-cap p {
+  margin: 0 !important;
+  font-size: 0.76rem !important;
+  line-height: 1.45 !important;
+  color: #6b7280 !important;
+}
+
+/* column header above an unboxed column, same tag treatment */
+.wet-hd {
+  display: block;
+  font-size: 0.61rem;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  margin-bottom: 0.4rem;
+}
+
+/* slide 30's theory-variable pills, lifted from the `rep` badge on slide 19 */
+.wet-chip {
+  display: inline-block;
+  border: 1px solid #d7dbe0;
+  border-radius: 2px;
+  padding: 0.16em 0.45em;
+  font-size: 0.76rem;
+  color: #2d3748;
+}
+
+/* the chips are markdown paragraphs, one per line, so that KaTeX runs on them.
+   Written as consecutive lines inside one raw HTML block they render as the
+   LITERAL dollar-sign source -- that is not a styling nit, it is the whole
+   theory-variable list coming out broken. */
+.wet-chips p {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.wet-chips p + p { margin-top: 0.34rem !important; }
+
+/* THE BOTTOM BARS are a left rule plus text, not a filled pill -- the same
+   object as the lead statements on slide 26. */
+.wet-bar {
+  margin-top: 1.1rem;
+  border-left: 3px solid #2b6cb0;
+  padding-left: 1.15rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1a1a1a;
+}
+
+.wet-bar p {
+  margin: 0 !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  color: #1a1a1a !important;
+}
+
+.wet-bar-red   { border-left-color: #c53030; }
+.wet-bar-green { border-left-color: #2f855a; }
+
+.wet-qual {
+  margin-top: 0.7rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #eef0f3;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.wet-qual p {
+  margin: 0 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.5 !important;
+  color: #6b7280 !important;
+}
+
+/* RED IS SCARCE: read/set on slide 29, indirect/many-to-many on slide 30, and
+   the steering term on slide 31. Nowhere else in these four slides. */
+.wet-red {
+  color: #c53030;
+  font-weight: 600 !important;
+}
