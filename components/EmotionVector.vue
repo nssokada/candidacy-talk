@@ -57,9 +57,6 @@
               <circle v-for="k in 3" :key="k" :cx="col.x + MU_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
             </g>
           </template>
-          <text class="mu-lab" :x="col.x + MU_W / 2" :y="rows.bottom + 20" text-anchor="middle">
-            μ<tspan class="sub" dy="3">{{ col.sub }}</tspan><tspan class="sup" dy="-8">(ℓ)</tspan>
-          </text>
         </g>
         <text class="cap" :x="(MU_E_X + MU_N_X + MU_W) / 2" :y="rows.bottom + 50" text-anchor="middle">
           fix a single layer ℓ
@@ -156,7 +153,7 @@
 
       <!-- ---------- the steering strip (click 6) ---------- -->
       <g class="strip" :class="{ 'is-on': stage >= 6 }">
-        <rect :x="0" :y="352" :width="VB_W" height="62" />
+        <rect :x="0" :y="352" :width="VB_W" :height="VB_H - 352" />
         <line class="rule" :x1="0" :y1="352" :x2="VB_W" :y2="352" />
       </g>
     </svg>
@@ -167,6 +164,15 @@
          would not match. Positions are px against the 884-wide content column,
          which is what the SVG's viewBox maps to 1:1; Slidev scales the whole
          page uniformly, so both track together. -->
+    <!-- The stage-0 mu labels, echoing slide 32's. KaTeX rather than SVG text:
+         a tspan-stacked sub/superscript sits side by side instead of one above
+         the other, and puts the mu in Inter next to equations that set it in
+         KaTeX_Math. -->
+    <div v-for="col in COLS" :key="`lab-${col.tone}`"
+         class="mu-lab" :class="[col.tone, { 'is-gone': stage >= 1 }]"
+         :style="{ left: `${col.x + MU_W / 2}px`, top: `${rows.bottom + 6}px` }"
+         v-html="col.tex" />
+
     <div class="eq eq-d" :class="{ 'is-on': stage >= 2, 'is-back': stage >= 5 }" v-html="EQ_D" />
 
     <div class="eq eq-vt" :class="{ 'is-on': stage >= 4 }" v-html="EQ_VT" />
@@ -184,6 +190,9 @@
 
 <script setup>
 import katex from 'katex'
+
+// Defined up here because COLS uses it: `const` is not hoisted.
+const K = (s) => katex.renderToString(s, { throwOnError: false })
 import { C, FONT, VB_W, VB_H, MU_W, MU_H, cloud, stackLayout } from '../emotionVizTokens.js'
 
 // stage = $clicks (0-6); every visible state is a pure function of it.
@@ -195,8 +204,8 @@ const rowL = rows[3]
 const MU_E_X = 120
 const MU_N_X = 200
 const COLS = [
-  { tone: 'rose', x: MU_E_X, sub: 'e' },
-  { tone: 'blue', x: MU_N_X, sub: 'n' },
+  { tone: 'rose', x: MU_E_X, tex: K('\\mu_e^{(\\ell)}') },
+  { tone: 'blue', x: MU_N_X, tex: K('\\mu_n^{(\\ell)}') },
 ]
 
 /* ---------- the scene ----------
@@ -256,7 +265,6 @@ const NOTE = [
 ]
 
 /* ---------- equations ---------- */
-const K = (s) => katex.renderToString(s, { throwOnError: false })
 const EQ_D = K('d = \\mu_e^{(\\ell)} - \\mu_n^{(\\ell)}')
 const EQ_VT = K('\\tilde v = (I - P^{\\top} P)\\,(\\mu_e^{(\\ell)} - \\mu_n^{(\\ell)})')
 const EQ_V = K('v = \\tilde v \\,/\\, \\lVert \\tilde v \\rVert')
@@ -310,16 +318,20 @@ const EQ_STEER = K('h^{(\\ell)} \\leftarrow h^{(\\ell)} + c \\cdot \\lVert \\bar
   opacity: 0.7;
 }
 
+/* KaTeX labels laid over the SVG at the foot of each column — same treatment,
+   same size, as slide 32's, so the seam holds through the typography too. */
 .mu-lab {
-  font-size: 14px;
-  font-weight: 500;
+  position: absolute;
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: opacity 300ms ease;
+  pointer-events: none;
 }
 
-.mu.rose .mu-lab { fill: v-bind('C.emotionText'); }
-.mu.blue .mu-lab { fill: v-bind('C.neutralText'); }
-
-.mu-lab .sub,
-.mu-lab .sup { font-size: 10px; }
+.mu-lab.is-gone { opacity: 0; }
+.mu-lab.rose { color: v-bind('C.emotionText'); }
+.mu-lab.blue { color: v-bind('C.neutralText'); }
+.mu-lab :deep(.katex) { font-size: 0.95rem; }
 
 .cap {
   font-size: 12px;

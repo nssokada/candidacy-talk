@@ -64,9 +64,16 @@ export const FONT = "'Inter', sans-serif"
 export const MONO = "'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace"
 
 /* Geometry. Authored against the academic-content content column (884px) and
-   the 410-414px content height the deck's other diagram slides reserve. */
+   the 410px content height the deck's other diagram slides reserve.
+
+   VB_H MUST equal the slide's reserved height. The SVG scales to fit with the
+   default preserveAspectRatio, so any mismatch scales user units by height/VB_H
+   — and these slides overlay KaTeX in positioned HTML on top of SVG geometry.
+   At 414 against a 410px box everything drifted by ~1%, which is enough to pull
+   a label off the column it belongs to. Keeping them equal makes one SVG user
+   unit exactly one CSS pixel. */
 export const VB_W = 884
-export const VB_H = 414
+export const VB_H = 410
 
 /* Easings, lifted from the idioms already in the deck. */
 export const EASE_ZOOM = 'cubic-bezier(0.16, 0.84, 0.44, 1)' // ThesisTimeline's slot collapse

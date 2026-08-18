@@ -148,9 +148,6 @@
             <circle v-for="k in 3" :key="k" :cx="col.x + MU_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
           </g>
         </template>
-        <text class="mu-lab" :x="col.x + MU_W / 2" :y="rows.bottom + 20" text-anchor="middle">
-          μ<tspan class="sub" dy="3">{{ col.sub }}</tspan><tspan class="sup" dy="-8">(ℓ)</tspan>
-        </text>
       </g>
 
       <!-- ============ the closing bracket (click 5) ============ -->
@@ -167,11 +164,25 @@
         </marker>
       </defs>
     </svg>
+
+    <!-- The mu labels are KaTeX in positioned HTML, not SVG text.
+         Hand-stacking a sub- and a superscript with tspan dy puts them SIDE BY
+         SIDE rather than one above the other, and the mu itself comes out in
+         Inter — so the same symbol appeared in two different typefaces on the
+         same slide as the equations. Positions are px against the 884x410
+         content column, which the SVG viewBox now maps to 1:1. -->
+    <div v-for="col in MU" :key="`lab-${col.tone}`"
+         class="mu-lab" :class="[col.tone, { 'is-on': stage >= col.at }]"
+         :style="{ left: `${col.x + MU_W / 2}px`, top: `${rows.bottom + 6}px` }"
+         v-html="col.tex" />
   </div>
 </template>
 
 <script setup>
+import katex from 'katex'
 import { C, FONT, MONO, VB_W, VB_H, CARD_R, MU_W, MU_H, stackLayout } from '../emotionVizTokens.js'
+
+const K = (s) => katex.renderToString(s, { throwOnError: false })
 
 // stage = $clicks (0-5); every visible state is a pure function of it.
 const props = defineProps({ stage: { type: Number, default: 0 } })
@@ -211,8 +222,8 @@ const MEAN_X = GRID_R + 16
 const MU_E_X = 700
 const MU_N_X = 782
 const MU = [
-  { tone: 'rose', x: MU_E_X, sub: 'e', at: 3, lag: 620 },
-  { tone: 'blue', x: MU_N_X, sub: 'n', at: 4, lag: 380 },
+  { tone: 'rose', x: MU_E_X, at: 3, lag: 620, tex: K('\\mu_e^{(\\ell)}') },
+  { tone: 'blue', x: MU_N_X, at: 4, lag: 380, tex: K('\\mu_n^{(\\ell)}') },
 ]
 
 const CAP_Y = rows.bottom + 76
@@ -236,6 +247,7 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 
 <style scoped>
 .ea {
+  position: relative;
   height: 410px;
   width: 100%;
 }
@@ -439,16 +451,25 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 
 .mu.is-on .cell { opacity: 1; transform: scale(1); }
 
-.mu .vdots, .mu .mu-lab { opacity: 0; transition: opacity 300ms ease; }
-.mu.is-on .vdots, .mu.is-on .mu-lab { opacity: 1; }
+.mu .vdots { opacity: 0; transition: opacity 300ms ease; }
+.mu.is-on .vdots { opacity: 1; }
 
 .mu.rose .cell { fill: v-bind('C.emotion'); }
 .mu.blue .cell { fill: v-bind('C.neutralFill'); }
 
-.mu-lab { font-size: 14px; font-weight: 500; }
-.mu.rose .mu-lab { fill: v-bind('C.emotionText'); }
-.mu.blue .mu-lab { fill: v-bind('C.neutralText'); }
-.mu-lab .sub, .mu-lab .sup { font-size: 10px; }
+/* KaTeX labels, laid over the SVG at the foot of each column. */
+.mu-lab {
+  position: absolute;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+}
+
+.mu-lab.is-on { opacity: 1; }
+.mu-lab.rose { color: v-bind('C.emotionText'); }
+.mu-lab.blue { color: v-bind('C.neutralText'); }
+.mu-lab :deep(.katex) { font-size: 0.95rem; }
 
 /* ---- closing bracket ---- */
 .wrap { opacity: 0; transition: opacity 320ms ease 200ms; }
@@ -458,7 +479,7 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 @media (prefers-reduced-motion: reduce) {
   /* Same content on the same click; every draw/slide reveal becomes a fade and
      the ghost streams simply do not run. */
-  .scene, .skip, .cap, .wrap, .mu .vdots, .mu .mu-lab, .tok-t {
+  .scene, .skip, .cap, .wrap, .mu .vdots, .mu-lab, .tok-t {
     transition: opacity 150ms ease !important;
     transition-delay: 0ms !important;
   }
