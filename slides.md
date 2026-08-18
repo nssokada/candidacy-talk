@@ -2290,6 +2290,59 @@ apologise for it — say it flat.
 ---
 layout: academic-content
 section: "STUDY 2 · LLM"
+clicks: 3
+---
+
+# Concepts live as directions
+
+<div style="height: 410px;">
+  <ConceptDirections :stage="$clicks" />
+</div>
+
+<template #references>
+Mikolov et al. (2013); Zou et al. (2023); Park et al. (2024)
+</template>
+
+<!--
+S3.0. 60 s. The premise the whole of Study 2 rests on (ConceptDirections
+component). It comes BEFORE "why a language model" on purpose: the next slide's
+READ / INTERVENE cards are only a licence if the audience already believes that
+a concept is a direction and that the model itself reads and writes directions.
+
+TAKEAWAY. Any direction in activation space can carry a concept — and a
+transformer's native operations are exactly reads and writes of directions.
+
+BUILD, 3 clicks:
+0. king and queen as vectors in a toy space — nearly identical, except one
+   dimension. Say "illustrative" out loud; the tag on the slide says it too.
+1. The displacement arrow, and the same displacement for man → woman. THE
+   CONCEPT IS THE DIRECTION, NOT AN AXIS.
+2. Scene swap: one band of the residual stream. Attention and MLP only ever
+   project h onto a direction or add a direction to h. The last clause of the
+   caption — "anything the model can write, we can write too" — is the licence
+   the next slide's INTERVENE card cashes. DO NOT CUT IT.
+3. Scene swap: whole contexts move the same way. This is the promissory note —
+   "this is the whole method, in miniature" — that slides 32-34 redeem.
+
+SPEAK TO (nothing below is on the slide):
+- The axes are a cartoon. Real features are not axis-aligned and there are far
+  more of them than dimensions (superposition). Say so if anyone looks sceptical;
+  the linear representation hypothesis is a claim about directions, not axes.
+- Click 3's pairs are MINIMAL pairs. Our stories are free retellings of a topic,
+  which is exactly why topic leaks into the raw contrast — and why slide 34
+  needs a projection step.
+
+Q. "So you just average differences?"
+→ Almost. The gap between almost and exactly is the next three slides.
+
+Q. "Why should a direction be linear at all?"
+→ Because that is all the architecture does with the stream: read by projection,
+  write by addition. It is the representation the components can actually use.
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
 ---
 
 # Why a language model
@@ -2614,6 +2667,36 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
+# What the vector decodes to
+
+<div class="flex justify-center my-2">
+  <img src="/figures/03-llm-emotion/topktokens_emotionvector.png" alt="Top-k tokens along an emotion vector" style="max-height: 370px; width: auto;" />
+</div>
+
+- Decoding the vector to tokens gives a face-valid readout of what the direction encodes
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+---
+
+# Emotion geometry: similarity structure
+
+<div class="flex justify-center my-2">
+  <img src="/figures/03-llm-emotion/similarity_across_emotions.png" alt="Similarity structure across emotions" style="max-height: 370px; width: auto;" />
+</div>
+
+- Clusters by a-priori emotion family, with no cross-valence errors
+
+<!--
+Backing for S3.3.
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+---
+
 # Representational geometry of emotion space
 
 <div class="flex justify-center items-center" style="height: 410px;">
@@ -2636,8 +2719,9 @@ SPEAK TO (nothing below is on the slide):
 - 9 of 10 clusters are pure to their a-priori emotion family; no cross-valence
   errors.
 
-Also on disk for backup: similarity_across_emotions.png (UMAP-style clustering)
-and cross_layer_rsa.png (stability across depth).
+The clustering (similarity_across_emotions.png) is the slide immediately BEFORE
+this one; the cross-layer stability (cross_layer_rsa.png) is the slide right
+AFTER the pair. Neither is in backup any more.
 -->
 
 ---
@@ -2673,6 +2757,24 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
+# Emotion geometry: stability across depth
+
+<div class="flex justify-center my-2">
+  <img src="/figures/03-llm-emotion/cross_layer_rsa.png" alt="Cross-layer representational similarity" style="max-height: 370px; width: auto;" />
+</div>
+
+- Cross-layer RSA: the geometry is **stable across network depth**, not an artifact of one layer
+
+<!--
+Half the answer to "why that layer?" (OQ-20). The full layer sweep for the d*
+shift is F3.B7 — STILL TO RUN.
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+---
+
 # Emotion vector activation across imminence
 
 <div class="flex justify-center items-center" style="height: 410px;">
@@ -2693,6 +2795,40 @@ SPEAK TO (nothing below is on the slide):
 - This is the direct answer to MOBBS on the imminence continuum: the task is
   pre-encounter and strategic, but the REPRESENTATION is graded along approach.
 - Pair with F5.B1 (predatory imminence continuum across all three paradigms).
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+---
+
+# Where the vector fires in text
+
+<div class="flex justify-center items-center" style="height: 410px;">
+  <img src="/figures/03-llm-emotion/ActivationInText.png" alt="Per-token cosine similarity with the afraid and ashamed vectors across two dialogues" style="max-height: 410px; max-width: 100%; width: auto;" />
+</div>
+
+<!--
+S3.3c. 30 s. The token-level read-out of the same projection.
+
+TAKEAWAY. Projected onto held-out text, the vector fires exactly where a reader
+would say the emotion is — it is not a diffuse topic direction.
+
+SPEAK TO (nothing below is on the slide):
+- Colour is the PER-TOKEN cosine with the emotion vector; the two panels are
+  two different emotions on two unrelated dialogues.
+- TOP (afraid): peaks on "Panic attacks", "Feeling tense", "worrying" — the
+  symptom tokens, not the word "anxiety" in the question.
+- BOTTOM (ashamed): the single darkest token in a conversation about Habsburg
+  Vienna is "embarrassed". The topic is tourism; the direction still finds the
+  affect.
+- This is the qualitative complement to the imminence curve on the previous
+  slide: same projection, read token-by-token instead of averaged.
+
+Q. "Is it just firing on emotion WORDS?"
+→ Partly, and that is expected — but the afraid panel peaks on descriptions of
+  symptoms rather than on the label, and the vectors were built from stories,
+  not from lexicons.
 -->
 
 ---
@@ -3779,54 +3915,6 @@ section: "BACKUP"
 <!--
 Backing for S3.2. Also on disk:
 example_emotion_activating_to_text.png — steering output shown as generated text.
--->
-
----
-layout: academic-content
-section: "BACKUP"
----
-
-# What the vector decodes to
-
-<div class="flex justify-center my-2">
-  <img src="/figures/03-llm-emotion/topktokens_emotionvector.png" alt="Top-k tokens along an emotion vector" style="max-height: 370px; width: auto;" />
-</div>
-
-- Decoding the vector to tokens gives a face-valid readout of what the direction encodes
-
----
-layout: academic-content
-section: "BACKUP"
----
-
-# Emotion geometry: similarity structure
-
-<div class="flex justify-center my-2">
-  <img src="/figures/03-llm-emotion/similarity_across_emotions.png" alt="Similarity structure across emotions" style="max-height: 370px; width: auto;" />
-</div>
-
-- Clusters by a-priori emotion family, with no cross-valence errors
-
-<!--
-Backing for S3.3.
--->
-
----
-layout: academic-content
-section: "BACKUP"
----
-
-# Emotion geometry: stability across depth
-
-<div class="flex justify-center my-2">
-  <img src="/figures/03-llm-emotion/cross_layer_rsa.png" alt="Cross-layer representational similarity" style="max-height: 370px; width: auto;" />
-</div>
-
-- Cross-layer RSA: the geometry is **stable across network depth**, not an artifact of one layer
-
-<!--
-Half the answer to "why that layer?" (OQ-20). The full layer sweep for the d*
-shift is F3.B7 — STILL TO RUN.
 -->
 
 ---

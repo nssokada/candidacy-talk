@@ -164,7 +164,7 @@
          would not match. Positions are px against the 884-wide content column,
          which is what the SVG's viewBox maps to 1:1; Slidev scales the whole
          page uniformly, so both track together. -->
-    <!-- The stage-0 mu labels, echoing slide 32's. KaTeX rather than SVG text:
+    <!-- The stage-0 mu labels, echoing slide 33's. KaTeX rather than SVG text:
          a tspan-stacked sub/superscript sits side by side instead of one above
          the other, and puts the mu in Inter next to equations that set it in
          KaTeX_Math. -->
@@ -196,7 +196,7 @@ import katex from 'katex'
 
 // Defined up here because COLS uses it: `const` is not hoisted.
 const K = (s) => katex.renderToString(s, { throwOnError: false })
-import { C, FONT, VB_W, VB_H, MU_W, MU_H, cloud, stackLayout } from '../emotionVizTokens.js'
+import { C, FONT, VB_W, VB_H, MU_W, MU_H, cloud, stackLayout, perspective } from '../emotionVizTokens.js'
 
 // stage = $clicks (0-6); every visible state is a pure function of it.
 const props = defineProps({ stage: { type: Number, default: 0 } })
@@ -226,17 +226,13 @@ const roseDots = cloud(40, R.x, R.y, 50, 22, 1337)
 const dLen = Math.hypot(R.x - B.x, R.y - B.y)
 
 /* ---------- the projection ----------
-   Mirrors CSS `transform: perspective(D) rotateX(THETA)` about (B.x, B.y):
-   rotateX sends (x, y, 0) to (x, y·cosθ, y·sinθ); the perspective divide is
-   then 1 − z/D. Keeping this in JS is what lets the plane's resting geometry be
-   ordinary 2D SVG that the projection lines can be drawn against. */
-const THETA = (58 * Math.PI) / 180
-const D = 900
+   The tilt itself lives in emotionVizTokens.js, because slide 30's pseudo-3D
+   axes use the same one — that shared angle is what makes this plane read as a
+   space the audience has already been shown. Here it is just re-anchored at
+   (B.x, B.y): screen-up is depth away from the viewer, so v = B.y − y. */
 function proj(x, y) {
-  const lx = x - B.x
-  const ly = y - B.y
-  const w = 1 - (ly * Math.sin(THETA)) / D
-  return { x: B.x + lx / w, y: B.y + (ly * Math.cos(THETA)) / w }
+  const p = perspective(x - B.x, B.y - y)
+  return { x: B.x + p.x, y: B.y + p.y }
 }
 
 const HALF_W = 215
@@ -322,7 +318,7 @@ const EQ_STEER = K('h^{(\\ell)} \\leftarrow h^{(\\ell)} + c \\cdot \\lVert \\bar
 }
 
 /* KaTeX labels laid over the SVG at the foot of each column — same treatment,
-   same size, as slide 32's, so the seam holds through the typography too. */
+   same size, as slide 33's, so the seam holds through the typography too. */
 .mu-lab {
   position: absolute;
   transform: translateX(-50%);

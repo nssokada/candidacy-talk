@@ -180,7 +180,7 @@
 
 <script setup>
 import katex from 'katex'
-import { C, FONT, MONO, VB_W, VB_H, CARD_R, MU_W, MU_H, stackLayout } from '../emotionVizTokens.js'
+import { C, FONT, MONO, VB_W, VB_H, CARD_R, MU_W, MU_H, stackLayout, TOKENS } from '../emotionVizTokens.js'
 
 const K = (s) => katex.renderToString(s, { throwOnError: false })
 
@@ -197,9 +197,8 @@ const STACKS = [
 ]
 
 /* ---------- the residual-stream grid ----------
-   Sub-word pieces on purpose ("spr" / "inted"): these are token positions, not
-   words, and the slide is only honest if it says so. */
-const TOKENS = ['She', 'spr', 'inted', 'through', 'the', 'dark', 'forest', ',', 'heart', 'pound', 'ing', '…']
+   TOKENS comes from emotionVizTokens: slide 30 draws one band with these exact
+   strings, so this grid reads as "the band you already saw, stacked 42 deep". */
 const SKIP_N = 4   // drawn stand-in for the 50 dropped positions
 
 const LAB_X = 246
