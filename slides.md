@@ -77,6 +77,11 @@ section: "Background"
   </div>
 </div>
 
+<template #references>
+Lima & Dill (1999); Lima et al. (1985)
+</template>
+
+
 <!--
 THREE-CLICK BUILD, additive — the squirrel never moves.
   click 0  the forager alone, sitting low in the frame
@@ -161,7 +166,7 @@ clicks: 3
 </div>
 
 <template #references>
-Bednekoff (2007)
+Bednekoff (2007); Lima & Dill (1999)
 </template>
 
 <style>
@@ -1995,15 +2000,14 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
-<Roadmap :active="2" />
+<!-- <Roadmap :active="2" /> -->
 
 # Functionalist premise
 
-<div class="wet-sub">Emotion as a causal role</div>
+<div class="wet-sub">Emotion as a causal functional state</div>
 
 <div class="wet-intro">
 
-On Adolphs & Andler (2018): emotions are **central states individuated by their causal connections** — to the conditions that elicit them, and to what they go on to change.
 
 </div>
 
@@ -2066,11 +2070,9 @@ Choice, vigor, reports, physiology
 
 </div>
 
-<div class="wet-bar" v-click="4">
-
-The object of study is a **causal role** — the state biases cognition and behavior **in parallel**.
-
-</div>
+<template #references>
+Sofroniew et al. (2026); Adolphs & Anders (2018)
+</template>
 
 <style>
 /*
@@ -2214,11 +2216,11 @@ We do not <span class="wet-red">read</span> or <span class="wet-red">set</span> 
 
 </div>
 
-<div class="wet-bar" v-click="5">
+<!-- <div class="wet-bar" v-click="5">
 
 Humans: we infer the state from its **causes** and its **consequences**.
 
-</div>
+</div> -->
 
 <style>
 /*
@@ -2394,7 +2396,7 @@ The vector is a *candidate representation* playing an *emotion-like* functional 
 </div>
 
 <template #references>
-Adolphs & Anderson (2018) · Adolphs & Andler (2018)
+Sofroniew et al. (2026);
 </template>
 
 <style>
@@ -2481,42 +2483,118 @@ Q (ADOLPHS). "Does it have emotions or represent emotion concepts?"
 ---
 layout: academic-content
 section: "STUDY 2 · LLM"
+clicks: 4
 ---
 
-# Extracting emotion vectors
+# Building the corpus
 
-<div class="relative flex justify-center items-center" style="height: 410px;">
-  <img v-click="[0,1]" src="/figures/03-llm-emotion/emotion_vector_process_1.png" alt="Emotion vector extraction, stage 1" class="absolute" style="max-height: 410px; max-width: 100%; width: auto;" />
-  <img v-click="[1,2]" src="/figures/03-llm-emotion/emotion_vector_process_2.png" alt="Emotion vector extraction, stage 2" class="absolute" style="max-height: 410px; max-width: 100%; width: auto;" />
-  <img v-click="2" src="/figures/03-llm-emotion/emotion_vector_process_3.png" alt="Emotion vector extraction, stage 3" class="absolute" style="max-height: 410px; max-width: 100%; width: auto;" />
+<div style="height: 410px;">
+  <EmotionCorpus :stage="$clicks" />
 </div>
 
 <!--
-S3.2. 1 min.
+S3.2a. 45 s. First of three method slides (EmotionCorpus component).
 
-TAKEAWAY. Topic-matched neutral stories and a neutral-PC projection strip scene
-content, leaving an affect direction.
+TAKEAWAY. The emotion is conveyed but never named — that is what makes a
+topic-matched contrast possible at all.
+
+BUILD, 4 clicks:
+0. 100 topics, three shown.
+1. × 50 emotions.
+2. The generation prompt — three excerpted lines. The NEVER line is the design.
+3. The tally: the corpus in one line. THIS IS THE ONLY NUMERIC STATEMENT in the
+   sequence; slides 30 and 31 do not restate it.
+4. One topic, told two ways — the rose/blue pair slide 30 opens on.
 
 SPEAK TO (nothing below is on the slide):
-- Corpus: 171 emotions x 100 topics x 12 retellings, plus 1,200 topic-matched
-  NEUTRAL stories.
-- Per emotion: mean residual activation minus the neutral mean.
-- PROJECT OUT THE TOP NEUTRAL PRINCIPAL COMPONENTS -- a forest chase fires motor
-  and spatial directions whether the runner is afraid or excited. This is the
-  step that does the work.
-- L2-normalize to a unit emotion vector; steer by adding it back, scaled.
-
-PRODUCTION: F3.2 is a five-stage pipeline figure — the three process stills on
-disk are the raw material. GIVE THE NEUTRAL-PC PROJECTION VISUAL WEIGHT; it is
-the step that does the work.
-Also available: emotion_stories_example.png (the parallel retellings) and
-example_emotion_activating_to_text.png — good as a build-in if you have room.
+- The emotion word-list is omitted deliberately. If asked: full taxonomy in the
+  appendix.
+- The neutral stories are TOPIC-MATCHED, not generic — same 100 topics, told
+  flat. That matching is what the next two slides spend.
 
 Q. "Why not just use emotion words?"
 → The parallel emotional/neutral retellings of the SAME TOPIC are what separate
   affect from content; a lexical approach can't do that.
 -->
 
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+clicks: 5
+---
+
+# From stories to means
+
+<div style="height: 410px;">
+  <EmotionActivations :stage="$clicks" />
+</div>
+
+<!--
+S3.2b. 45 s. Second of three method slides (EmotionActivations component).
+
+TAKEAWAY. One mean per layer — and we skip the first 50 tokens.
+
+BUILD, 5 clicks:
+0. The two story stacks, ×12 retellings each, and Gemma 2-9B-IT's 42 layers.
+1. One emotional story goes through; a token strip appears beside layer ℓ.
+2. THE SUBTLE POINT, on its own click: the first 50 token positions are dropped
+   — stories open in a stylized register that has nothing to do with the
+   emotion. What's left is averaged, per layer.
+3. Average across stories → μₑ, one mean per layer.
+4. Same pass, neutral corpus → μₙ. Deliberately fast; it is the same operation.
+5. Repeat for each of the 50 emotions × each layer.
+
+SPEAK TO (nothing below is on the slide):
+- Residual-stream activations, read at every layer, not a chosen one.
+- No attention heads, no MLPs — this is a mean over token positions, nothing
+  more clever than that.
+
+Q. "Why 50 tokens?" → openings are formulaic ("It was a dark…"); the cut is
+  fixed a priori, not tuned, and results are stable across nearby cutoffs.
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+clicks: 6
+---
+
+# Carving out the emotion direction
+
+<div style="height: 410px;">
+  <EmotionVector :stage="$clicks" />
+</div>
+
+<!--
+S3.2c. 1 min. Third of three method slides (EmotionVector component).
+THE SLIDE THAT DOES THE WORK — the other two are setup.
+
+TAKEAWAY. The raw contrast still contains topic; topic is the neutral subspace;
+project it out.
+
+BUILD, 6 clicks:
+0. Fix a single layer ℓ.
+1. Each dot is one story's mean activation there.
+2. d = μₑ − μₙ, the raw contrast.
+3. THE PROBLEM AND THE FIX TOGETHER: d is still entangled with topic — a forest
+   chase fires motor and spatial directions whether the runner is afraid or
+   excited — and "topic" is operationalized as the top-k PCs of the NEUTRAL
+   stories, k the smallest with cumulative variance ≥ τ = 0.5.
+4. Project that subspace out. What survives is ṽ.
+5. Normalize → v: one unit vector per emotion, per layer.
+6. Steering: add it back at inference, scaled to the residual-stream norm.
+
+SPEAK TO (nothing below is on the slide):
+- P is the row-stacked top-k neutral PCs at layer ℓ; the layer dependence is
+  suppressed in the notation, not in the method.
+- L2 normalization is what makes c comparable across emotions and layers.
+- DWELL ON CLICK 3. It is the step that does the work; everything before it is
+  setup and everything after is bookkeeping.
+
+Q. "Doesn't projecting out neutral PCs remove real emotion variance too?"
+→ Some, yes — this is a conservative move. The steering results are the check:
+  what survives still causally shifts behavior.
+-->
 ---
 layout: academic-content
 section: "STUDY 2 · LLM"
