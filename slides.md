@@ -1,6 +1,13 @@
 ---
 theme: seriph
 background: '#ffffff'
+# This deck is light-only: the background above is forced white and every colour
+# in style.css, the layouts and the components is chosen against white. Without
+# this key Slidev follows the BROWSER's prefers-color-scheme, and a machine in
+# dark mode gets `.dark` on `html` — which repaints `body` white while the slide
+# background stays white, so anything inheriting its colour disappears. That is
+# what made slide 34's equations render white on white. Keep this pinned.
+colorSchema: light
 title: Trading Effort Against Threat — Candidacy Talk
 info: |
   ## Trading effort against threat: one survival computation at three resolutions

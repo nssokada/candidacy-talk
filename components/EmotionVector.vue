@@ -617,6 +617,23 @@ const EQ_STEER = K('h^{(\\ell)} \\leftarrow h^{(\\ell)} + c \\cdot \\lVert \\bar
   pointer-events: none;
 }
 
+/* THE EQUATIONS MUST DECLARE THEIR OWN COLOUR — this is not decoration.
+   KaTeX emits spans that set no colour of their own, so `.eq` used to inherit
+   from `body`. When the browser reports prefers-color-scheme: dark, Slidev puts
+   `.dark` on `html` and `body` turns WHITE — while this deck's background stays
+   `#ffffff`, because the headmatter forces it. The result was every equation on
+   this slide rendering white on white, invisible, with the glosses beside them
+   still readable because they declare `color` and so were never inheriting.
+
+   Reproduced: under colorScheme dark the computed glyph colour was
+   rgb(255,255,255); with this rule it stays rgb(26,26,26) in both schemes.
+   `colorSchema: light` in the headmatter now stops `.dark` being added at all,
+   and this rule is the belt to that braces — it holds even if something else
+   forces the class. Every other equation surface in the deck (slides 3, 19, 31,
+   56) already sets an explicit colour, which is exactly why the bug showed up
+   HERE and nowhere else. Do not delete this and rely on inheritance. */
+.eq { color: #1a1a1a; }
+
 .eq.is-on,
 .gloss.is-on { opacity: 1; }
 
