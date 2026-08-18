@@ -2534,20 +2534,34 @@ S3.2b. 45 s. Second of three method slides (EmotionActivations component).
 
 TAKEAWAY. One mean per layer — and we skip the first 50 tokens.
 
+WALK THE AXES BEFORE THE BUILD. Columns are token positions of one story
+(sub-word pieces — "spr", "inted"); bands are transformer blocks, depth running
+downward; the vertical line through each column is that token's RESIDUAL
+STREAM. A cell is the residual vector at that token after that block. Say this
+once, plainly — the rest of the slide is arithmetic on those cells.
+
 BUILD, 5 clicks:
-0. The two story stacks, ×12 retellings each, and Gemma 2-9B-IT's 42 layers.
-1. One emotional story goes through; a token strip appears beside layer ℓ.
+0. The empty grid: Gemma 2-9B-IT's blocks × one story's tokens.
+1. The story goes through and every cell lights: one activation vector per
+   token, per layer. THIS is what we read out.
 2. THE SUBTLE POINT, on its own click: the first 50 token positions are dropped
    — stories open in a stylized register that has nothing to do with the
-   emotion. What's left is averaged, per layer.
+   emotion — and the kept cells in each row collapse rightward into that row's
+   mean.
 3. Average across stories → μₑ, one mean per layer.
 4. Same pass, neutral corpus → μₙ. Deliberately fast; it is the same operation.
 5. Repeat for each of the 50 emotions × each layer.
 
 SPEAK TO (nothing below is on the slide):
-- Residual-stream activations, read at every layer, not a chosen one.
-- No attention heads, no MLPs — this is a mean over token positions, nothing
-  more clever than that.
+- We read the residual stream, not attention heads or MLP activations — the
+  block writes into the stream and we take what is there.
+- Every layer, not a chosen one; picking ℓ comes on the next slide.
+- The averaging is exactly as dumb as it looks: a mean over token positions,
+  then a mean over stories. Nothing more clever than that.
+
+Q. "Why the residual stream rather than a specific head?" → the stream is the
+  block's output as the next block sees it; a direction there is one the model
+  can actually act on, which is what the steering result needs.
 
 Q. "Why 50 tokens?" → openings are formulaic ("It was a dark…"); the cut is
   fixed a priori, not tuned, and results are stable across nearby cutoffs.

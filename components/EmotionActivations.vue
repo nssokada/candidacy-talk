@@ -1,9 +1,21 @@
+<!--
+  EmotionActivations.vue — slide B: where the vectors actually come from.
+
+  The picture is the transformer's residual stream drawn honestly: one COLUMN
+  per token of the story, one BAND per block, and a cell at every intersection —
+  the residual-stream vector at that token after that block. That is the object
+  being averaged, so the slide has to show it rather than gesture at a stack of
+  opaque "Layer" boxes with a token strip floating off to one side.
+
+  Depth runs downward to match the mu columns slide C opens on (Layer 1 at the
+  top). The layer-row pattern itself comes from emotionVizTokens so the B -> C
+  seam cannot drift.
+-->
 <template>
   <div class="ea">
     <svg class="dg" :viewBox="`0 0 ${VB_W} ${VB_H}`" role="img"
-         aria-label="Each story is passed through Gemma 2-9B-IT; token activations after position 50 are averaged per layer, then averaged across stories to give an emotional mean and a neutral mean per layer">
+         aria-label="Each story is passed through Gemma 2-9B-IT. The residual stream is drawn as a grid: one column per token, one band per transformer block, a vector at every intersection. Dropping the first 50 token positions and averaging the rest gives one mean per layer, and averaging across stories gives an emotional and a neutral mean.">
 
-      <!-- Everything except the two mu columns dims at click 5. -->
       <g class="scene" :class="{ 'is-back': stage >= 5 }">
 
         <!-- ============ story stacks (stage 0) ============
@@ -19,77 +31,103 @@
           <text class="head" :x="ST_X + 10" :y="s.y + 13">{{ s.head }}</text>
           <text v-for="(ln, j) in s.body" :key="ln" class="body"
                 :x="ST_X + 10" :y="s.y + 34 + j * 14">{{ ln }}</text>
-          <text class="tag" :x="ST_X + 14" :y="s.y + ST_H + 20">×12 retellings</text>
+          <text class="tag" :x="ST_X + 12" :y="s.y + ST_H + 20">×12 retellings</text>
         </g>
 
         <!-- ============ the model ============ -->
-        <g class="model">
-          <rect class="mbox" :x="M_X" :y="M_Y" :width="M_W" :height="M_H" rx="8" />
-          <text class="mlabel" :x="M_X + M_W / 2" :y="M_Y + 24" text-anchor="middle">Gemma 2-9B-IT</text>
-          <template v-for="(r, i) in rows" :key="i">
-            <g v-if="r.kind === 'row'">
-              <rect class="lrow" :class="{ 'is-ell': r.ell }"
-                    :x="M_X + 16" :y="r.y" :width="M_W - 32" :height="r.h" rx="4" />
-              <text class="lrow-t" :class="{ 'is-ell': r.ell }"
-                    :x="M_X + M_W / 2" :y="r.cy + 4" text-anchor="middle">{{ r.label }}</text>
-            </g>
-            <g v-else class="vdots">
-              <circle v-for="k in 3" :key="k" :cx="M_X + M_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
-            </g>
+        <!-- Right-aligned to the layer labels: the rotated token strings climb
+             up-and-right out of the grid, so anything left-aligned here runs
+             straight into "She" and "spr". -->
+        <text class="mlabel" :x="LAB_X" :y="GRID_TOP - 30" text-anchor="end">Gemma 2-9B-IT</text>
+
+        <!-- depth axis -->
+        <g class="depth">
+          <line :x1="AX_X" :y1="GRID_TOP + 4" :x2="AX_X" :y2="rows.bottom - 4"
+                marker-end="url(#ea-depth)" />
+          <text :x="AX_X - 7" :y="(GRID_TOP + rows.bottom) / 2"
+                text-anchor="middle" :transform="`rotate(-90 ${AX_X - 7} ${(GRID_TOP + rows.bottom) / 2})`">depth</text>
+        </g>
+
+        <!-- token strings, above their own columns -->
+        <g class="toks" :class="{ 'is-cut': stage >= 2 }">
+          <text v-for="(t, i) in TOKENS" :key="i" class="tok-t" :class="{ 'is-dim': i < SKIP_N }"
+                :x="colX(i)" :y="GRID_TOP - 12"
+                :transform="`rotate(-45 ${colX(i)} ${GRID_TOP - 12})`">{{ t }}</text>
+        </g>
+
+        <!-- the residual streams: one vertical line per token, running through
+             every block. Drawn first so the bands and cells sit on top. -->
+        <line v-for="(t, i) in TOKENS" :key="`s${i}`" class="stream"
+              :x1="colX(i)" :y1="GRID_TOP - 6" :x2="colX(i)" :y2="rows.bottom + 6" />
+
+        <!-- the blocks -->
+        <template v-for="(r, i) in rows" :key="i">
+          <g v-if="r.kind === 'row'">
+            <rect class="blk" :class="{ 'is-ell': r.ell }"
+                  :x="GRID_L" :y="r.y" :width="GRID_R - GRID_L" :height="r.h" rx="4" />
+            <text class="lrow-t" :class="{ 'is-ell': r.ell }" :x="LAB_X" :y="r.cy + 4"
+                  text-anchor="end">{{ r.label }}</text>
+          </g>
+          <g v-else class="vdots">
+            <circle v-for="k in 3" :key="k" :cx="LAB_X - 14" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
+          </g>
+        </template>
+
+        <!-- one cell per (token, block): the residual-stream vector there.
+             This is the object everything downstream averages. -->
+        <g class="cells" :class="{ 'is-on': stage >= 1, 'is-swept': stage >= 2 }">
+          <template v-for="(r, ri) in drawn" :key="ri">
+            <rect v-for="(t, i) in TOKENS" :key="`${ri}-${i}`" class="cell"
+                  :class="{ 'is-drop': stage >= 2 && i < SKIP_N, 'is-kept': stage >= 2 && i >= SKIP_N }"
+                  :x="colX(i) - CELL_W / 2" :y="r.cy - CELL_H / 2"
+                  :width="CELL_W" :height="CELL_H" rx="2"
+                  :style="cellStyle(ri, i)" />
           </template>
         </g>
 
-        <!-- ============ the flying story (click 1) ============
-             One rose card translates into the model box and shrinks, then stops
-             being drawn once it is "inside" at click 2. -->
-        <g class="flyer" :class="{ 'is-in': stage >= 1, 'is-gone': stage >= 2 }">
+        <!-- The story going in. It is a TRANSITION, not a state: it flies to the
+             grid and is fully faded by the time click 1 settles, so no resting
+             state ever has a card parked on top of a cell. -->
+        <g class="flyer" :class="{ 'is-in': stage >= 1 }">
           <rect class="face rose-s" :x="ST_X" :y="STACKS[0].y" :width="ST_W" :height="ST_H" :rx="CARD_R" />
         </g>
 
-        <!-- ============ token strip apparatus (clicks 1-2) ============ -->
-        <g class="strip" :class="{ 'is-on': stage >= 1, 'is-gone': stage >= 3 }">
-          <text class="cap" :x="TS_X" :y="TS_Y - 14">one story, at layer ℓ</text>
-          <rect v-for="(t, i) in TOKENS" :key="i" class="tok"
-                :class="{ 'is-dim': stage >= 2 && i < SKIP_N, 'is-swept': stage >= 2 && i >= SKIP_N }"
-                :x="TS_X + i * (TOK + 2)" :y="TS_Y" :width="TOK" :height="TOK" rx="2"
-                :style="{ '--dx': `${MEAN_X - (TS_X + i * (TOK + 2))}px`, transitionDelay: stage >= 2 ? `${(i - SKIP_N) * 22}ms` : '0ms' }" />
-
-          <!-- the subtle point, on its own click -->
-          <g class="skip" :class="{ 'is-on': stage >= 2 }">
-            <path class="brace" :d="braceD" />
-            <text class="skip-t" :x="TS_X" :y="TS_Y + 36">skip first 50 tokens</text>
-            <text class="skip-s" :x="TS_X" :y="TS_Y + 50">(stylized openings)</text>
-          </g>
+        <!-- ============ the skipped opening (click 2) ============ -->
+        <g class="skip" :class="{ 'is-on': stage >= 2 }">
+          <path class="brace" :d="braceD" />
+          <text class="skip-t" :x="GRID_L + 4" :y="rows.bottom + 34">skip first 50 tokens</text>
+          <text class="skip-s" :x="GRID_L + 4" :y="rows.bottom + 48">(stylized openings)</text>
         </g>
 
-        <!-- ============ the per-layer mean cells (click 2) ============
-             The collapse, repeated down the stack: one cell on every drawn layer
-             row. At click 3 the whole column flies right and becomes mu_e. -->
+        <!-- ============ per-layer means (click 2) ============ -->
         <g class="means" :class="{ 'is-on': stage >= 2, 'is-flown': stage >= 3 }">
           <rect v-for="(r, i) in drawn" :key="i" class="mcell"
                 :x="MEAN_X" :y="r.cy - MU_H / 2" :width="MU_W" :height="MU_H" rx="3"
-                :style="{ transitionDelay: stage >= 2 && stage < 3 ? `${i * 80}ms` : '0ms' }" />
-          <text class="cap" :class="{ 'is-on': stage >= 2 }" :x="TS_X" :y="rows.bottom + 26">
-            mean over token positions, per layer
-          </text>
+                :style="{ transitionDelay: stage >= 2 && stage < 3 ? `${420 + i * 80}ms` : '0ms' }" />
         </g>
 
-        <!-- The click-2 caption's slot is reused at click 3: same place, next
-             sentence, so the eye does not have to find a new line. -->
-        <text class="cap cap3" :class="{ 'is-on': stage >= 3 }" :x="TS_X" :y="rows.bottom + 26">
+        <!-- captions share one slot: each click replaces the sentence rather
+             than stacking another line under it. -->
+        <text class="cap" :class="{ 'is-on': stage < 1 }" :x="GRID_L" :y="CAP_Y">
+          each column is one token's residual stream · each band a transformer block
+        </text>
+        <text class="cap" :class="{ 'is-on': stage === 1 }" :x="GRID_L" :y="CAP_Y">
+          one activation vector per token, per layer
+        </text>
+        <text class="cap" :class="{ 'is-on': stage === 2 }" :x="GRID_L" :y="CAP_Y">
+          mean over the kept token positions, per layer
+        </text>
+        <text class="cap" :class="{ 'is-on': stage >= 3 }" :x="GRID_L" :y="CAP_Y">
           average across stories → one mean per layer
         </text>
 
         <!-- ============ ghost streams ============
-             One-shot, non-looping — the same idiom ThesisTimeline uses for its
-             single pulse. They say "many stories", then get out of the way. -->
+             One-shot, non-looping — the idiom ThesisTimeline uses for its single
+             pulse. They say "many stories", then get out of the way. -->
         <g v-if="stage >= 3" class="ghosts rose">
           <rect v-for="k in 5" :key="k" class="gcell"
                 :x="MEAN_X" :y="rows[3].cy - MU_H / 2" :width="MU_W" :height="MU_H" rx="3"
                 :style="{ '--dx': `${MU_E_X - MEAN_X}px`, animationDelay: `${(k - 1) * 120}ms` }" />
-          <g class="gdots">
-            <circle v-for="k in 3" :key="k" :cx="MEAN_X + 46 + (k - 1) * 9" :cy="rows[3].cy" r="1.8" />
-          </g>
         </g>
         <g v-if="stage >= 4" class="ghosts blue">
           <rect v-for="k in 2" :key="k" class="gcard"
@@ -101,31 +139,17 @@
       <!-- ============ the mu columns ============
            NOT inside .scene: at click 5 everything else recedes and these stay
            lit. This is the state EmotionVector's stage 0 echoes. -->
-      <g class="mu rose" :class="{ 'is-on': stage >= 3 }">
+      <g v-for="col in MU" :key="col.tone" class="mu" :class="[col.tone, { 'is-on': stage >= col.at }]">
         <template v-for="(r, i) in rows" :key="i">
           <rect v-if="r.kind === 'row'" class="cell"
-                :x="MU_E_X" :y="r.cy - MU_H / 2" :width="MU_W" :height="MU_H" rx="3"
-                :style="{ transitionDelay: stage >= 3 ? `${560 + i * 60}ms` : '0ms' }" />
+                :x="col.x" :y="r.cy - MU_H / 2" :width="MU_W" :height="MU_H" rx="3"
+                :style="{ transitionDelay: stage >= col.at ? `${col.lag + i * 60}ms` : '0ms' }" />
           <g v-else class="vdots">
-            <circle v-for="k in 3" :key="k" :cx="MU_E_X + MU_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
+            <circle v-for="k in 3" :key="k" :cx="col.x + MU_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
           </g>
         </template>
-        <text class="mu-lab" :x="MU_E_X + MU_W / 2" :y="rows.bottom + 20" text-anchor="middle">
-          μ<tspan class="sub" dy="3">e</tspan><tspan class="sup" dy="-8">(ℓ)</tspan>
-        </text>
-      </g>
-
-      <g class="mu blue" :class="{ 'is-on': stage >= 4 }">
-        <template v-for="(r, i) in rows" :key="i">
-          <rect v-if="r.kind === 'row'" class="cell"
-                :x="MU_N_X" :y="r.cy - MU_H / 2" :width="MU_W" :height="MU_H" rx="3"
-                :style="{ transitionDelay: stage >= 4 ? `${380 + i * 55}ms` : '0ms' }" />
-          <g v-else class="vdots">
-            <circle v-for="k in 3" :key="k" :cx="MU_N_X + MU_W / 2" :cy="r.y + 3 + (k - 1) * 7" r="1.6" />
-          </g>
-        </template>
-        <text class="mu-lab" :x="MU_N_X + MU_W / 2" :y="rows.bottom + 20" text-anchor="middle">
-          μ<tspan class="sub" dy="3">n</tspan><tspan class="sup" dy="-8">(ℓ)</tspan>
+        <text class="mu-lab" :x="col.x + MU_W / 2" :y="rows.bottom + 20" text-anchor="middle">
+          μ<tspan class="sub" dy="3">{{ col.sub }}</tspan><tspan class="sup" dy="-8">(ℓ)</tspan>
         </text>
       </g>
 
@@ -136,57 +160,77 @@
           for each of the 50 emotions × each layer
         </text>
       </g>
+
+      <defs>
+        <marker id="ea-depth" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M 0 2 L 8 5 L 0 8 z" :fill="C.gray" />
+        </marker>
+      </defs>
     </svg>
   </div>
 </template>
 
 <script setup>
-import { C, FONT, VB_W, VB_H, CARD_R, MU_W, MU_H, stackLayout } from '../emotionVizTokens.js'
+import { C, FONT, MONO, VB_W, VB_H, CARD_R, MU_W, MU_H, stackLayout } from '../emotionVizTokens.js'
 
 // stage = $clicks (0-5); every visible state is a pure function of it.
 const props = defineProps({ stage: { type: Number, default: 0 } })
 
-/* ---------- geometry ---------- */
-const ST_X = 8
-const ST_W = 166
+/* ---------- story stacks ---------- */
+const ST_X = 0
+const ST_W = 150
 const ST_H = 62
 const STACKS = [
-  // Trimmed to fit ST_W at 11px: the floor on diagram type is the constraint,
-  // so the wording gives, not the size.
-  { tone: 'rose', y: 58,  head: 'EMOTIONAL', body: ['She sprinted through the', 'dark forest, heart…'] },
-  { tone: 'blue', y: 200, head: 'NEUTRAL',   body: ['She walked through the', 'forest along a path.'] },
+  { tone: 'rose', y: 78,  head: 'EMOTIONAL', body: ['She sprinted through', 'the dark forest…'] },
+  { tone: 'blue', y: 212, head: 'NEUTRAL',   body: ['She walked through', 'the forest…'] },
 ]
 
-const M_X = 214
-const M_Y = 56
-const M_W = 170
+/* ---------- the residual-stream grid ----------
+   Sub-word pieces on purpose ("spr" / "inted"): these are token positions, not
+   words, and the slide is only honest if it says so. */
+const TOKENS = ['She', 'spr', 'inted', 'through', 'the', 'dark', 'forest', ',', 'heart', 'pound', 'ing', '…']
+const SKIP_N = 4   // drawn stand-in for the 50 dropped positions
+
+const LAB_X = 246
+const AX_X = 186     // depth axis, clear of the widest layer label ("Layer 42")
+const GRID_L = 258
+const COL_W = 29
+const colX = (i) => GRID_L + 12 + i * COL_W
+const GRID_R = colX(TOKENS.length - 1) + 14
+
 const rows = stackLayout(94)
 const drawn = rows.filter((r) => r.kind === 'row')
-const M_H = rows.bottom - M_Y + 18
+const GRID_TOP = rows[0].y
 
-/* The token strip is 12 drawn squares standing in for one story, aligned to the
-   Layer-ℓ row. SKIP_N of them stand in for the 50 dropped positions — the drawn
-   count is illustrative; the 50 in the label is the real number. */
-const TOK = 12
-const TOKENS = Array.from({ length: 12 })
-const SKIP_N = 4
-const TS_X = 418
-const TS_Y = rows[3].cy - TOK / 2
-const TS_R = TS_X + TOKENS.length * (TOK + 2) - 2   // right end of the strip
+const CELL_W = 19
+const CELL_H = 13
 
-/* The sweep collapses LEFT TO RIGHT onto a single cell at the strip's right
-   end; that cell column then flies right again and settles as μₑ. */
-const MEAN_X = TS_R - MU_W
+/* The sweep collapses the kept cells rightward onto one cell per row, which then
+   flies right again and settles as μₑ. */
+const MEAN_X = GRID_R + 16
+const MU_E_X = 700
+const MU_N_X = 782
+const MU = [
+  { tone: 'rose', x: MU_E_X, sub: 'e', at: 3, lag: 620 },
+  { tone: 'blue', x: MU_N_X, sub: 'n', at: 4, lag: 380 },
+]
 
-const MU_E_X = 696
-const MU_N_X = 776
+const CAP_Y = rows.bottom + 76
 
-/* A flat square brace: down, across, down. Used twice — under the skipped
-   tokens, and under both mu columns at the end. */
+/* Per-cell transition. Stagger runs on the way IN only — a delayed exit makes
+   backward stepping feel broken, so every hidden state transitions at 0ms. */
+function cellStyle(ri, i) {
+  const s = { '--dx': `${MEAN_X + MU_W / 2 - colX(i)}px` }
+  if (props.stage === 1) s.transitionDelay = `${i * 26 + ri * 40}ms`
+  else if (props.stage >= 2 && i >= SKIP_N) s.transitionDelay = `${(i - SKIP_N) * 26 + ri * 70}ms`
+  else s.transitionDelay = '0ms'
+  return s
+}
+
 const brace = (x1, x2, y, drop) =>
   `M ${x1} ${y} L ${x1} ${y + drop} L ${x2} ${y + drop} L ${x2} ${y}`
 
-const braceD = brace(TS_X, TS_X + SKIP_N * (TOK + 2) - 2, TS_Y + TOK + 4, 8)
+const braceD = brace(colX(0) - CELL_W / 2, colX(SKIP_N - 1) + CELL_W / 2, rows.bottom + 8, 8)
 const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 </script>
 
@@ -200,181 +244,140 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
   width: 100%;
   height: 100%;
   overflow: visible;
+  /* Diagram text lives in SVG text elements on purpose: style.css forces
+     Inter/300 onto every div inside .slidev-layout, and SVG text escapes it. */
   font-family: v-bind(FONT);
 }
 
-/* Click 5: the working recedes, the answer stays. */
-.scene {
-  opacity: 1;
-  transition: opacity 420ms ease;
-}
-
-.scene.is-back {
-  opacity: 0.35;
-}
+.scene { opacity: 1; transition: opacity 420ms ease; }
+.scene.is-back { opacity: 0.35; }
 
 /* ---- story piles (A -> B seam) ---- */
-.face {
-  fill: v-bind('C.white');
-  stroke-width: 1;
-}
+.face { fill: v-bind('C.white'); stroke-width: 1; }
+.ghost-card { fill: v-bind('C.white'); stroke-width: 1; opacity: 0.45; }
 
-.ghost-card {
-  fill: v-bind('C.white');
-  stroke-width: 1;
-  opacity: 0.45;
-}
-
-.pile.rose .face,
-.pile.rose .ghost-card { stroke: v-bind('C.emotion'); }
-.pile.blue .face,
-.pile.blue .ghost-card { stroke: v-bind('C.neutral'); }
-
+.pile.rose .face, .pile.rose .ghost-card { stroke: v-bind('C.emotion'); }
+.pile.blue .face, .pile.blue .ghost-card { stroke: v-bind('C.neutral'); }
 .pile.rose .band { fill: v-bind('C.emotionSoft'); }
 .pile.blue .band { fill: v-bind('C.neutralSoft'); }
 
-.head {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-}
-
+.head { font-size: 9px; font-weight: 600; letter-spacing: 0.06em; }
 .pile.rose .head { fill: v-bind('C.emotionText'); }
 .pile.blue .head { fill: v-bind('C.neutralText'); }
 
-.body {
-  font-size: 11px;
-  font-weight: 400;
+.body { font-size: 11px; font-weight: 400; fill: v-bind('C.ink'); }
+.tag { font-size: 11px; font-weight: 500; fill: v-bind('C.desc'); }
+
+/* ---- model furniture ---- */
+.mlabel {
+  font-size: 12px;
+  font-weight: 600;
   fill: v-bind('C.ink');
 }
 
-.tag {
-  font-size: 11px;
+.depth line { stroke: v-bind('C.gray'); stroke-width: 1; opacity: 0.55; }
+
+.depth text {
+  font-size: 9px;
   font-weight: 500;
-  fill: v-bind('C.desc');
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  fill: v-bind('C.gray');
 }
 
-/* ---- the model ---- */
-.mbox {
+.lrow-t { font-size: 11px; font-weight: 400; fill: v-bind('C.desc'); }
+.lrow-t.is-ell { font-weight: 600; fill: v-bind('C.ink'); }
+
+.vdots circle { fill: v-bind('C.gray'); opacity: 0.7; }
+
+/* ---- the grid itself ---- */
+.tok-t {
+  font-family: v-bind(MONO);
+  font-size: 11px;
+  font-weight: 400;
+  fill: v-bind('C.ink');
+  text-anchor: start;
+  transition: opacity 300ms ease;
+}
+
+.toks.is-cut .tok-t.is-dim { opacity: 0.25; }
+
+/* The residual stream: one line per token position, running through every
+   block. Light enough that the cells read as the content. */
+.stream {
+  stroke: v-bind('C.axisFaint');
+  stroke-width: 1;
+}
+
+/* A transformer block, spanning every token position. */
+.blk {
   fill: v-bind('C.panel');
   stroke: v-bind('C.rule');
   stroke-width: 1;
 }
 
-.mlabel {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  fill: v-bind('C.ink');
-}
-
-.lrow {
-  fill: v-bind('C.white');
-  stroke: v-bind('C.rule');
-  stroke-width: 1;
-}
-
-.lrow.is-ell {
+.blk.is-ell {
   fill: v-bind('C.wash');
   stroke: v-bind('C.gray');
 }
 
-.lrow-t {
-  font-size: 11px;
-  font-weight: 400;
-  fill: v-bind('C.desc');
-}
-
-.lrow-t.is-ell {
-  font-weight: 600;
-  fill: v-bind('C.ink');
-}
-
-.vdots circle {
-  fill: v-bind('C.gray');
-  opacity: 0.7;
-}
-
-/* ---- the flying story ---- */
-.flyer {
+.cell {
+  fill: v-bind('C.emotion');
   opacity: 0;
-  transform: translate(0, 0) scale(1);
-  transform-origin: 91px 89px;
-  transition: opacity 200ms ease, transform 450ms cubic-bezier(0.16, 0.84, 0.44, 1);
+  transition: opacity 260ms ease, transform 460ms cubic-bezier(0.16, 0.84, 0.44, 1);
 }
 
-.flyer.is-in {
-  opacity: 1;
-  transform: translate(208px, 62px) scale(0.42);
-}
+.cells.is-on .cell { opacity: 0.92; }
 
-.flyer.is-gone {
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
+/* Dropped positions stay put and fade back; kept ones slide right onto the mean
+   cell and hand over to it. */
+.cells.is-swept .cell.is-drop { opacity: 0.12; }
 
-.rose-s {
-  stroke: v-bind('C.emotion');
-  fill: v-bind('C.emotionSoft');
-}
-
-/* ---- token strip ---- */
-.strip {
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.strip.is-on { opacity: 1; }
-.strip.is-gone { opacity: 0; }
-
-.tok {
-  fill: v-bind('C.emotionSoft');
-  stroke: v-bind('C.emotion');
-  stroke-width: 0.8;
-  transition: opacity 300ms ease, transform 500ms cubic-bezier(0.16, 0.84, 0.44, 1);
-}
-
-.tok.is-dim { opacity: 0.15; }
-
-/* The sweep-collapse: every kept square slides left onto the first one and
-   fades, leaving the single mean cell that fades in underneath. */
-.tok.is-swept {
+.cells.is-swept .cell.is-kept {
   opacity: 0;
   transform: translateX(var(--dx));
 }
 
-.skip {
+/* ---- the flying story ---- */
+/* Visible only in flight: opacity is 0 at BOTH ends, held up by a delay while
+   the card travels, then dropped. Stepping back re-arms it without leaving
+   anything behind. */
+.flyer {
   opacity: 0;
-  transition: opacity 260ms ease 260ms;
+  transform: translate(0, 0) scale(1);
+  transform-box: view-box;
+  transform-origin: 75px 109px;
+  transition: opacity 180ms ease, transform 0ms;
 }
 
+.flyer.is-in {
+  opacity: 0;
+  transform: translate(214px, -8px) scale(0.28);
+  transition: opacity 200ms ease 420ms, transform 560ms cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+
+/* The fade-out is the only thing that keeps it off the grid, so a browser that
+   skips the animation must not leave it showing. */
+.flyer.is-in > * { animation: flash-through 620ms ease 1 both; }
+
+@keyframes flash-through {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.rose-s { stroke: v-bind('C.emotion'); fill: v-bind('C.emotionSoft'); }
+
+/* ---- the skipped opening ---- */
+.skip { opacity: 0; transition: opacity 260ms ease 200ms; }
 .skip.is-on { opacity: 1; }
 
-.brace {
-  fill: none;
-  stroke: v-bind('C.gray');
-  stroke-width: 1;
-}
+.brace { fill: none; stroke: v-bind('C.gray'); stroke-width: 1; }
 
-.skip-t {
-  font-size: 11px;
-  font-weight: 600;
-  fill: v-bind('C.ink');
-}
+.skip-t { font-size: 11px; font-weight: 600; fill: v-bind('C.ink'); }
+.skip-s { font-size: 11px; font-weight: 400; fill: v-bind('C.desc'); }
 
-.skip-s {
-  font-size: 11px;
-  font-weight: 400;
-  fill: v-bind('C.desc');
-}
-
-.cap {
-  font-size: 11px;
-  font-weight: 400;
-  fill: v-bind('C.desc');
-}
-
-/* ---- per-layer mean cells ---- */
+/* ---- per-layer means ---- */
 .means .mcell {
   fill: v-bind('C.emotion');
   opacity: 0;
@@ -385,24 +388,20 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 
 .means.is-flown .mcell {
   opacity: 0;
-  transform: translateX(60px);
+  transform: translateX(50px);
   transition-delay: 0ms;
 }
 
-.means .cap {
+/* ---- captions ---- */
+.cap {
+  font-size: 11px;
+  font-weight: 400;
+  fill: v-bind('C.desc');
   opacity: 0;
   transition: opacity 260ms ease;
 }
 
-.means .cap.is-on { opacity: 1; }
-.means.is-flown .cap { opacity: 0; }
-
-.cap3 {
-  opacity: 0;
-  transition: opacity 260ms ease 420ms;
-}
-
-.cap3.is-on { opacity: 1; }
+.cap.is-on { opacity: 1; }
 
 /* ---- ghost streams: one shot, no loop ---- */
 .gcell {
@@ -417,11 +416,6 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
   animation: fly-through 900ms cubic-bezier(0.16, 0.84, 0.44, 1) 1 both;
 }
 
-.ghosts .gdots circle {
-  fill: v-bind('C.emotion');
-  animation: blip 500ms ease 620ms 1 both;
-}
-
 @keyframes fly-right {
   0%   { opacity: 0.9; transform: translateX(0); }
   70%  { opacity: 0.35; }
@@ -430,13 +424,8 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
 
 @keyframes fly-through {
   0%   { opacity: 0.9; transform: translate(0, 0) scale(1); }
-  45%  { opacity: 0.7; transform: translate(208px, var(--dy)) scale(0.42); }
+  45%  { opacity: 0.7; transform: translate(210px, var(--dy)) scale(0.3); }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.2); }
-}
-
-@keyframes blip {
-  0%, 100% { opacity: 0; }
-  50%      { opacity: 0.8; }
 }
 
 /* ---- mu columns (the B -> C seam) ---- */
@@ -448,71 +437,49 @@ const wrapD = brace(MU_E_X - 6, MU_N_X + MU_W + 6, rows.bottom + 34, 10)
   transition: opacity 260ms ease, transform 340ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.mu.is-on .cell {
-  opacity: 1;
-  transform: scale(1);
-}
+.mu.is-on .cell { opacity: 1; transform: scale(1); }
 
-.mu .vdots,
-.mu .mu-lab {
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-
-.mu.is-on .vdots,
-.mu.is-on .mu-lab { opacity: 1; }
+.mu .vdots, .mu .mu-lab { opacity: 0; transition: opacity 300ms ease; }
+.mu.is-on .vdots, .mu.is-on .mu-lab { opacity: 1; }
 
 .mu.rose .cell { fill: v-bind('C.emotion'); }
 .mu.blue .cell { fill: v-bind('C.neutralFill'); }
 
-.mu-lab {
-  font-size: 14px;
-  font-weight: 500;
-}
-
+.mu-lab { font-size: 14px; font-weight: 500; }
 .mu.rose .mu-lab { fill: v-bind('C.emotionText'); }
 .mu.blue .mu-lab { fill: v-bind('C.neutralText'); }
-
-.mu-lab .sub { font-size: 10px; }
-.mu-lab .sup { font-size: 10px; }
+.mu-lab .sub, .mu-lab .sup { font-size: 10px; }
 
 /* ---- closing bracket ---- */
-.wrap {
-  opacity: 0;
-  transition: opacity 320ms ease 200ms;
-}
-
+.wrap { opacity: 0; transition: opacity 320ms ease 200ms; }
 .wrap.is-on { opacity: 1; }
-
-.wrap-t {
-  font-size: 12px;
-  font-weight: 500;
-  fill: v-bind('C.ink');
-}
+.wrap-t { font-size: 12px; font-weight: 500; fill: v-bind('C.ink'); }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Same content on the same click; every draw/scale/translate reveal becomes a
-     plain fade, and the ghost streams simply do not run. */
-  .scene, .strip, .skip, .cap, .wrap, .mu .vdots, .mu .mu-lab {
+  /* Same content on the same click; every draw/slide reveal becomes a fade and
+     the ghost streams simply do not run. */
+  .scene, .skip, .cap, .wrap, .mu .vdots, .mu .mu-lab, .tok-t {
     transition: opacity 150ms ease !important;
     transition-delay: 0ms !important;
   }
 
-  .flyer {
-    transform: translate(208px, 62px) scale(0.42) !important;
-    transition: opacity 150ms ease !important;
+  .flyer, .flyer.is-in {
+    opacity: 0 !important;
+    transform: none !important;
+    transition: none !important;
   }
 
-  .tok,
-  .means .mcell,
-  .mu .cell {
+  .flyer.is-in > * { animation: none; opacity: 0; }
+
+  .cell, .means .mcell, .mu .cell {
     transform: none !important;
     transition: opacity 150ms ease !important;
     transition-delay: 0ms !important;
   }
 
+  .cells.is-swept .cell.is-kept { opacity: 0; }
   .means.is-flown .mcell { opacity: 0; }
 
-  .gcell, .gcard, .ghosts .gdots circle { animation: none; opacity: 0; }
+  .gcell, .gcard { animation: none; opacity: 0; }
 }
 </style>
