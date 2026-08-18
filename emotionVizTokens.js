@@ -159,25 +159,23 @@ export function cloud(n, cx, cy, sx, sy, seed) {
 }
 
 /* -----------------------------------------------------------------------------
-   The tokenized story — the slide 30 <-> slide 33 seam.
-
-   ConceptDirections draws one residual-stream band; EmotionActivations draws the
-   same band stacked 42 deep. That echo only lands if the strings are literally
-   the same, so they live here rather than in either component.
+   The tokenized story.
 
    Sub-word pieces on purpose ("spr" / "inted"): these are token POSITIONS, not
-   words, and the audience should have seen that before slide 33 asks them to
-   average over token positions.
+   words, and slide 33 is only honest about averaging over token positions if
+   the strip it draws says so.
+
+   Lives here rather than in EmotionActivations because slide 30 briefly drew
+   the same band and the two had to agree; that band is gone, so this currently
+   has one consumer. Kept here because the taxonomy of shared drawing constants
+   belongs in one file, not because a second slide still needs it.
    ----------------------------------------------------------------------------- */
 export const TOKENS = ['She', 'spr', 'inted', 'through', 'the', 'dark', 'forest', ',', 'heart', 'pound', 'ing', '…']
 
 /* -----------------------------------------------------------------------------
    The projection.
 
-   ONE tilt, shared by ConceptDirections' pseudo-3D axes (slide 30) and
-   EmotionVector's neutral-PC plane (slide 34). Slide 30 quietly pre-trains the
-   audience on the visual language slide 34 needs, and that only works if the two
-   pictures agree about where "away from the viewer" goes.
+   The tilt EmotionVector's neutral-PC plane rests at (slide 34).
 
    Mirrors CSS `transform: perspective(D) rotateX(THETA)`: rotateX sends a point
    at in-plane depth v to v·cosθ on screen and v·sinθ toward the camera, so the
@@ -189,19 +187,16 @@ export const TOKENS = ['She', 'spr', 'inted', 'through', 'the', 'dark', 'forest'
    Keeping this in JS is what lets the resting geometry be ordinary 2D SVG that
    projection lines, leaders and arrowheads can be drawn against.
 
-   `d` IS THE ONE THING THE TWO SLIDES DISAGREE ABOUT, deliberately. Slide 34
-   wants the divide: the tilted plane has to look like it recedes. Slide 30 must
-   NOT have it — a perspective projection sends parallel 3D lines to converging
-   screen lines, and the entire claim of that slide is that king → queen and
-   man → woman are the SAME displacement. Measured on the built slide, any
-   placement far enough apart to read as two arrows put 3-5 degrees between them,
-   which is exactly the thing the audience is being asked not to see. So slide 30
-   passes d = Infinity and takes the axonometric limit: same 58-degree tilt, same
-   sense of depth, parallel stays parallel.
+   A note for anyone tempted to reuse this for a picture whose point is that two
+   displacements are PARALLEL: don't, or drop the divide first. A perspective
+   projection sends parallel 3D lines to converging screen lines — measured, any
+   two placements far enough apart to read as separate arrows end up 3-5 degrees
+   apart on screen. The axonometric limit (w = 1) keeps the same tilt without
+   that. Slide 30 needed exactly this and is the reason the caveat is recorded.
    ----------------------------------------------------------------------------- */
 export const PROJ = { THETA: (58 * Math.PI) / 180, D: 900 }
 
-export function perspective(u, v, h = 0, d = PROJ.D) {
-  const w = 1 + (v * Math.sin(PROJ.THETA)) / d
+export function perspective(u, v, h = 0) {
+  const w = 1 + (v * Math.sin(PROJ.THETA)) / PROJ.D
   return { x: u / w, y: (-v * Math.cos(PROJ.THETA) - h) / w }
 }

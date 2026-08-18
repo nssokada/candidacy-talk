@@ -2300,44 +2300,43 @@ clicks: 3
 </div>
 
 <template #references>
-Mikolov et al. (2013); Zou et al. (2023); Park et al. (2024)
+Zou et al. (2023); Park et al. (2024)
 </template>
 
 <!--
-S3.0. 60 s. The premise the whole of Study 2 rests on (ConceptDirections
+S3.0. 40 s. The premise the whole of Study 2 rests on (ConceptDirections
 component). It comes BEFORE "why a language model" on purpose: the next slide's
-READ / INTERVENE cards are only a licence if the audience already believes that
-a concept is a direction and that the model itself reads and writes directions.
+READ / INTERVENE cards only land as a licence if the audience already believes
+that a concept is a direction you can measure and move along.
 
-TAKEAWAY. Any direction in activation space can carry a concept — and a
-transformer's native operations are exactly reads and writes of directions.
+TAKEAWAY. A concept is a DIRECTION, and contexts that differ only in feeling all
+displace along the same one. That is the whole extraction method, in miniature.
 
 BUILD, 3 clicks:
-0. king and queen as vectors in a toy space — nearly identical, except one
-   dimension. Say "illustrative" out loud; the tag on the slide says it too.
-1. The displacement arrow, and the same displacement for man → woman. THE
-   CONCEPT IS THE DIRECTION, NOT AN AXIS.
-2. Scene swap: one band of the residual stream. Attention and MLP only ever
-   project h onto a direction or add a direction to h. The last clause of the
-   caption — "anything the model can write, we can write too" — is the licence
-   the next slide's INTERVENE card cashes. DO NOT CUT IT.
-3. Scene swap: whole contexts move the same way. This is the promissory note —
-   "this is the whole method, in miniature" — that slides 32-34 redeem.
+0. Two hateful sentences, sitting in the space as vectors from the origin.
+   They are about different things — the world, cats.
+1. Their matched retellings: same content, opposite feeling.
+2. THE SLIDE. Both displacement arrows draw AT ONCE — pause here and let it
+   land before speaking. Different topics, one shared direction. That direction
+   is the concept.
+3. The payoff: average many such displacements and you have the vector. This is
+   the promissory note that slides 32-34 redeem.
 
 SPEAK TO (nothing below is on the slide):
-- The axes are a cartoon. Real features are not axis-aligned and there are far
-  more of them than dimensions (superposition). Say so if anyone looks sceptical;
-  the linear representation hypothesis is a claim about directions, not axes.
-- Click 3's pairs are MINIMAL pairs. Our stories are free retellings of a topic,
-  which is exactly why topic leaks into the raw contrast — and why slide 34
-  needs a projection step.
+- These are MINIMAL pairs. Our stories are free retellings of a topic, not
+  minimal edits — which is exactly why topic leaks into the raw contrast, and
+  why slide 34 needs a projection step. Flag it here and the projection stops
+  looking like a fudge when it arrives.
+- The picture is 2D and the space is not. Nothing here depends on the
+  dimension; it depends on the displacement being shared.
 
 Q. "So you just average differences?"
 → Almost. The gap between almost and exactly is the next three slides.
 
-Q. "Why should a direction be linear at all?"
-→ Because that is all the architecture does with the stream: read by projection,
-  write by addition. It is the representation the components can actually use.
+Q. "Why should a concept be a direction at all?"
+→ Because that is all the architecture does with the residual stream: read by
+  projection, write by addition. A direction is the representation the
+  components can actually use. (Zou et al., Park et al. — footer.)
 -->
 
 ---
@@ -3097,8 +3096,8 @@ section: "STUDY 3 · VR"
 <!--
 SECTION DIVIDER — CHAPTER 3 LIT.
 
-10 s. Read Chapter 3's question off the card, then go straight into the rig
-video.
+10 s. Read Chapter 3's question off the card, then go straight into the rig,
+the task, and the demo video — in that order.
 
 The 2D-vs-embodied limitation slide that used to sit here was dropped — say the
 limitation out loud over the divider instead: keypressing is not foraging,
@@ -3109,33 +3108,6 @@ Q. "Then how much of Study 1 survives?"
 → The valuation structure and the trait dissociation are about choice, which
   transfers. What needs an embodied test is the vigor architecture and the
   defensive interpretation. BE PRECISE about which claims are at risk.
--->
-
----
-layout: full-bleed
-title: The rig — built and running
----
-
-<video controls autoplay muted loop playsinline>
-  <source src="/figures/04-vr-embodied/rig_demo.mp4" type="video/mp4" />
-</video>
-
-<!--
-★ REHEARSE. S4.2, part 1 of 2. 1 min. THE SECTION SELLS THE RIG, NOT THE DESIGN.
-
-FULL-BLEED VIDEO, same treatment as the Study 1 gameplay clip. No title, no
-text, no furniture. Autoplays muted and loops, so it is already running when you
-land.
-
-TAKEAWAY. This is built and running.
-
-Let it play and say it plainly: this exists, it is running, and a participant
-walked in it. HAVE A STILL FRAME READY IF PLAYBACK FAILS — the backup slides
-carry stills of every instrument.
-NOTE: the original IMG_8632.MOV does not decode in Chrome (HEVC). It was
-re-encoded to rig_demo.mp4 (H.264, 720p), which is what this slide loads; the
-original is kept alongside it.
-The spec asks for ≤30 s — trim rig_demo.mp4 down before the talk.
 -->
 
 ---
@@ -3150,7 +3122,8 @@ section: "STUDY 3 · VR"
 </div>
 
 <!--
-★ REHEARSE. S4.2, part 2 of 2. 1 min.
+★ REHEARSE. S4.2. 1 min. FIRST slide of the section proper — the rig before
+the task it runs.
 
 THE BULLETS ARE GONE — the schematic carries the slide, so SAY the instrument
 list off the figure: Pico 4 HMD + Pupil Labs eye tracking; Virtuix Omni One
@@ -3170,20 +3143,187 @@ Q (SHIMOJO). "How well does the treadmill preserve natural gait?"
 ---
 layout: academic-content
 section: "STUDY 3 · VR"
+clicks: 4
 ---
 
 # Embodied Effort Foraging Task
 
-<div class="flex justify-center items-center" style="height: 410px;">
-  <img src="/figures/04-vr-embodied/VRTask.png" alt="VR task structure" style="max-height: 410px; max-width: 100%; width: auto;" />
+<div class="vrt-row">
+  <div class="vrt-col vrt-choice" v-click="1">
+    <div class="vrt-head">
+      <div class="vrt-num">1</div>
+      <div class="vrt-name">Choice</div>
+      <div class="vrt-sub">Evaluate options</div>
+    </div>
+    <img src="/figures/04-vr-embodied/choice.png" alt="Choice — environmental threat at 0, 50 or 100% danger, and distance at 5 or 15 metres" />
+  </div>
+  <div class="vrt-col vrt-action" v-click="2">
+    <div class="vrt-head">
+      <div class="vrt-num">2</div>
+      <div class="vrt-name">Action</div>
+      <div class="vrt-sub">Move toward chosen target</div>
+    </div>
+    <img src="/figures/04-vr-embodied/action.png" alt="Action — goal-directed locomotion, with motor vigor read off walking speed" />
+  </div>
+  <div class="vrt-col vrt-threat" v-click="3">
+    <div class="vrt-head">
+      <div class="vrt-num">3</div>
+      <div class="vrt-name">Threat dynamics</div>
+      <div class="vrt-sub">Predator threat unfolds over time</div>
+    </div>
+    <img src="/figures/04-vr-embodied/PredatorDynamics.png" alt="Threat dynamics — pre-encounter anticipatory threat and post-encounter reactive threat" />
+  </div>
+  <div class="vrt-col vrt-outcome" v-click="4">
+    <div class="vrt-head">
+      <div class="vrt-num">4</div>
+      <div class="vrt-name">Outcome</div>
+      <div class="vrt-sub">Reach safety or caught by predator</div>
+    </div>
+    <img src="/figures/04-vr-embodied/EndState.png" alt="Outcome — safety reached, or captured by the predator" />
+  </div>
 </div>
 
-<!--
-S4.3, part 1 of 2. 30 s. Show the task, then the plan.
+<style>
+/*
+  SLIDE GEOMETRY ONLY. Four panels build in left to right on clicks 1-4; after
+  the last click the row reproduces the composite task figure.
 
-THE BULLETS ARE GONE — say them over the figure: the foraging structure carried
-over (leave cover, haul the reward, escape if taken), and effort is now
-METABOLIC while escape is WHOLE-BODY.
+  COLUMN WIDTHS ARE THE PANELS' OWN ASPECT RATIOS at a shared 290px panel
+  height -- 616x831, 497x833, 940x910, 466x890 give 215 + 173 + 300 + 152 = 840,
+  plus three 12px gaps = 876, inside the 884px content width. If a panel is
+  re-exported at a different aspect, recompute all four or the row overflows.
+
+  The header block is a FIXED 74px, top-aligned, so the numbered badges and the
+  labels line up across all four columns AND the panels still start on the same
+  baseline even though the captions run to different line counts.
+
+  NEVER write an HTML tag inside a comment in this block (no angle brackets at
+  all): the block is extracted by a text match, and any tag-looking text inside
+  it breaks the whole slide at compile time.
+*/
+.vrt-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 12px;
+  height: 380px;
+}
+
+.vrt-col { flex: none; }
+.vrt-choice  { width: 215px; }
+.vrt-action  { width: 173px; }
+.vrt-threat  { width: 300px; }
+.vrt-outcome { width: 152px; }
+
+.vrt-col img {
+  height: 290px;
+  width: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.vrt-head {
+  height: 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.vrt-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  margin-bottom: 3px;
+}
+
+.vrt-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  line-height: 1.15;
+}
+
+.vrt-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 300;
+  color: #6b7280;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+</style>
+
+<!--
+S4.3, part 1 of 2. 45 s. FOUR CLICKS, one per panel, left to right. Land each
+one in a sentence and move -- the row only has to reproduce the trial.
+
+TAKEAWAY. The same foraging trial as Study 1, rebuilt so that effort is
+metabolic and escape is whole-body.
+
+CLICK 1 -- CHOICE. Two graded axes again, both visible before committing:
+environmental threat (0 / 50 / 100% danger, read off the sky and the beacon)
+and distance (5 vs 15 m), which is now the effort cost. Value = reward minus
+effort(distance) minus threat -- the SAME valuation equation as Study 1.
+
+CLICK 2 -- ACTION. The keypress is gone. Transport is real locomotion on the
+Virtuix, so vigor is per-stride forward speed measured at the ankles rather
+than a finger rate.
+
+CLICK 3 -- THREAT DYNAMICS. This is the part Study 1 could not do. Pre-encounter
+the predator is a DISTANCE that closes on you; post-encounter it is a chase.
+Anticipatory and reactive defense are separated WITHIN a trial.
+
+CLICK 4 -- OUTCOME. Reach the goal, or get caught -- and the capture is
+experienced, not a number deducted from a score.
+
+Next: the rig that runs it.
+
+Q. "Is 5 vs 15 m enough of an effort range?"
+-> On the Virtuix it is metabolic, not nominal; pilot HR and stride data set
+   the range, and the calibration walk sets it per person exactly as the press
+   rate did in Study 1.
+-->
+
+---
+layout: full-bleed
+title: The rig — built and running
+---
+
+<video controls autoplay muted loop playsinline>
+  <source src="/figures/04-vr-embodied/rig_demo.mp4" type="video/mp4" />
+</video>
+
+<!--
+★ REHEARSE. S4.4. 1 min. SECTION CLOSER — the rig and the task have both been
+shown; this is the proof they exist. THE SECTION SELLS THE RIG, NOT THE DESIGN.
+
+FULL-BLEED VIDEO, same treatment as the Study 1 gameplay clip. No title, no
+text, no furniture. Autoplays muted and loops, so it is already running when you
+land.
+
+TAKEAWAY. This is built and running — the task you just walked through is not
+a mock-up.
+
+Let it play and say it plainly: this exists, it is running, and a participant
+walked in it. HAVE A STILL FRAME READY IF PLAYBACK FAILS — the backup slides
+carry stills of every instrument.
+NOTE: the original IMG_8632.MOV does not decode in Chrome (HEVC). It was
+re-encoded to rig_demo.mp4 (H.264, 720p), which is what this slide loads; the
+original is kept alongside it.
+The spec asks for ≤30 s — trim rig_demo.mp4 down before the talk.
 -->
 
 ---

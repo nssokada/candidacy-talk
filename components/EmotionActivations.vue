@@ -197,8 +197,8 @@ const STACKS = [
 ]
 
 /* ---------- the residual-stream grid ----------
-   TOKENS comes from emotionVizTokens: slide 30 draws one band with these exact
-   strings, so this grid reads as "the band you already saw, stacked 42 deep". */
+   TOKENS comes from emotionVizTokens, where the shared drawing constants live.
+   Sub-word pieces on purpose — these are token positions, not words. */
 const SKIP_N = 4   // drawn stand-in for the 50 dropped positions
 
 const LAB_X = 246

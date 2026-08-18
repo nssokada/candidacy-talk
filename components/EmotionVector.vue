@@ -226,9 +226,8 @@ const roseDots = cloud(40, R.x, R.y, 50, 22, 1337)
 const dLen = Math.hypot(R.x - B.x, R.y - B.y)
 
 /* ---------- the projection ----------
-   The tilt itself lives in emotionVizTokens.js, because slide 30's pseudo-3D
-   axes use the same one — that shared angle is what makes this plane read as a
-   space the audience has already been shown. Here it is just re-anchored at
+   The tilt itself lives in emotionVizTokens.js, alongside the note on when it
+   is the wrong projection to reach for. Here it is just re-anchored at
    (B.x, B.y): screen-up is depth away from the viewer, so v = B.y − y. */
 function proj(x, y) {
   const p = perspective(x - B.x, B.y - y)
