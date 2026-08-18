@@ -173,7 +173,10 @@
          :style="{ left: `${col.x + MU_W / 2}px`, top: `${rows.bottom + 6}px` }"
          v-html="col.tex" />
 
-    <div class="eq eq-d" :class="{ 'is-on': stage >= 2, 'is-back': stage >= 5 }" v-html="EQ_D" />
+    <!-- The DIAGRAM recedes at click 5, not the maths. Dimming this equation
+         washed out the definition of d at exactly the moment the audience is
+         asked to compare it with v-tilde on the line below. -->
+    <div class="eq eq-d" :class="{ 'is-on': stage >= 2 }" v-html="EQ_D" />
 
     <div class="eq eq-vt" :class="{ 'is-on': stage >= 4 }" v-html="EQ_VT" />
     <div class="gloss gl-vt" :class="{ 'is-on': stage >= 4 }">P: top-k neutral PCs at layer ℓ, row-stacked</div>
@@ -622,7 +625,8 @@ const EQ_STEER = K('h^{(\\ell)} \\leftarrow h^{(\\ell)} + c \\cdot \\lVert \\bar
 .eq.is-on,
 .gloss.is-on { opacity: 1; }
 
-.eq.is-back { opacity: 0.3; }
+/* No is-back state for equations: once a formula is on the slide it stays fully
+   legible. Only the drawing behind it recedes. */
 
 .eq :deep(.katex) { font-size: 1.02rem; }
 
