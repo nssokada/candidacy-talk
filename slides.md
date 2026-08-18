@@ -2071,7 +2071,7 @@ Choice, vigor, reports, physiology
 </div>
 
 <template #references>
-Sofroniew et al. (2026); Adolphs & Anders (2018)
+Adolphs & Andler (2018)
 </template>
 
 <style>
@@ -2290,7 +2290,7 @@ apologise for it — say it flat.
 ---
 layout: academic-content
 section: "STUDY 2 · LLM"
-clicks: 3
+clicks: 2
 ---
 
 # Concepts live as directions
@@ -2312,15 +2312,22 @@ that a concept is a direction you can measure and move along.
 TAKEAWAY. A concept is a DIRECTION, and contexts that differ only in feeling all
 displace along the same one. That is the whole extraction method, in miniature.
 
-BUILD, 3 clicks:
+BUILD, 2 clicks:
 0. Two hateful sentences, sitting in the space as vectors from the origin.
    They are about different things — the world, cats.
 1. Their matched retellings: same content, opposite feeling.
 2. THE SLIDE. Both displacement arrows draw AT ONCE — pause here and let it
    land before speaking. Different topics, one shared direction. That direction
    is the concept.
-3. The payoff: average many such displacements and you have the vector. This is
-   the promissory note that slides 32-34 redeem.
+
+THE FIGURE HAS NO CAPTION — it is the picture alone, so the two lines that used
+to print under it are YOURS TO SAY, and the slide will not say them for you.
+Land them on click 2, in this order:
+- "Matched pairs — same content, opposite feeling — displace along one shared
+  direction."
+- "Average many such displacements and you have the concept vector." That is the
+  promissory note slides 32-34 redeem; say it as the exit line rather than
+  waiting for a click that no longer exists.
 
 SPEAK TO (nothing below is on the slide):
 - These are MINIMAL pairs. Our stories are free retellings of a topic, not
@@ -2348,11 +2355,11 @@ section: "STUDY 2 · LLM"
 
 <div class="wet-sub">Representational read/write access</div>
 
-<div class="wet-intro">
+<!-- <div class="wet-intro">
 
 LLMs give access to a candidate representation **in the same coordinate system as the theory** — and such representations plausibly exist because predicting human-authored text requires tracking the emotional states of the people in it.
 
-</div>
+</div> -->
 
 <div class="wet-row wet-row4">
 
@@ -2443,7 +2450,7 @@ We identify a candidate emotion representation, **perturb that same representati
 
 <div class="wet-qual" v-click="5">
 
-The vector is a *candidate representation* playing an *emotion-like* functional role — not evidence of *feeling*, and not necessarily the complete representation.
+The vector is a *candidate representation* playing an *emotion-like* functional role. Not evidence of *feeling*, and not necessarily the complete representation.
 
 </div>
 
@@ -2774,33 +2781,6 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
-# Emotion vector activation across imminence
-
-<div class="flex justify-center items-center" style="height: 410px;">
-  <img src="/figures/03-llm-emotion/EmotionVectorActivation_AcrossImminence.png" alt="Emotion vector activation as the predator closes" style="max-height: 410px; max-width: 100%; width: auto;" />
-</div>
-
-<!--
-S3.3b. 30 s. MOVED UP FROM BACKUP — the representation lands before the task.
-
-TAKEAWAY. The emotion-vector projection tracks the predator's approach: the
-internal state moves WITH imminence, not only with the decision.
-
-SPEAK TO (nothing below is on the slide):
-- The projection is GRADED along approach — not a step change at the moment of
-  the choice.
-- Flag forward: the task these traces come from is the flight-initiation task
-  on the next slide.
-- This is the direct answer to MOBBS on the imminence continuum: the task is
-  pre-encounter and strategic, but the REPRESENTATION is graded along approach.
-- Pair with F5.B1 (predatory imminence continuum across all three paradigms).
--->
-
----
-layout: academic-content
-section: "STUDY 2 · LLM"
----
-
 # Where the vector fires in text
 
 <div class="flex justify-center items-center" style="height: 410px;">
@@ -2828,6 +2808,33 @@ Q. "Is it just firing on emotion WORDS?"
 → Partly, and that is expected — but the afraid panel peaks on descriptions of
   symptoms rather than on the label, and the vectors were built from stories,
   not from lexicons.
+-->
+
+---
+layout: academic-content
+section: "STUDY 2 · LLM"
+---
+
+# Emotion vector activation across imminence
+
+<div class="flex justify-center items-center" style="height: 410px;">
+  <img src="/figures/03-llm-emotion/EmotionVectorActivation_AcrossImminence.png" alt="Emotion vector activation as the predator closes" style="max-height: 410px; max-width: 100%; width: auto;" />
+</div>
+
+<!--
+S3.3b. 30 s. MOVED UP FROM BACKUP — the representation lands before the task.
+
+TAKEAWAY. The emotion-vector projection tracks the predator's approach: the
+internal state moves WITH imminence, not only with the decision.
+
+SPEAK TO (nothing below is on the slide):
+- The projection is GRADED along approach — not a step change at the moment of
+  the choice.
+- Flag forward: the task these traces come from is the flight-initiation task
+  on the next slide.
+- This is the direct answer to MOBBS on the imminence continuum: the task is
+  pre-encounter and strategic, but the REPRESENTATION is graded along approach.
+- Pair with F5.B1 (predatory imminence continuum across all three paradigms).
 -->
 
 ---

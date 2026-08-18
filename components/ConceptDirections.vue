@@ -8,22 +8,26 @@
   The shapes here are the shapes slide 34 opens on, so the audience meets the
   picture before it meets the mathematics.
 
-  ONE SCENE, FOUR STATES. Stage 0 is the resting state and carries no motion of
-  its own; each click adds a beat:
+  ONE SCENE, THREE STATES. Stage 0 is the resting state and carries no motion
+  of its own; each click adds a beat:
 
     0  the hateful contexts — two sentences that share a feeling
     1  their matched retellings, same content and opposite feeling
     2  the two displacements, drawn TOGETHER
-    3  the payoff line
 
   Click 2 is the slide. Both arrows draw on ONE delay, not in sequence: the
   claim is that the two pairs move the same way, and a stroke chasing another
   stroke would say the opposite.
 
+  THE FIGURE CARRIES NO CAPTION. Two summary lines used to print under it — the
+  matched-pairs claim on click 2, the averaging payoff on click 3. Both are now
+  spoken rather than printed and live in the presenter notes; the slide is the
+  picture alone, which is why the click budget is 2 and not 3.
+
   Every visible state is a pure function of `stage`, so stepping backwards lands
   exactly where the forward step drew. Entrances stage, exits cut — the delays
-  come from d1/d2/d3, which collapse to 0ms the moment their beat is not
-  showing, or a backward step would replay the choreography in reverse.
+  come from d1/d2, which collapse to 0ms the moment their beat is not showing,
+  or a backward step would replay the choreography in reverse.
 -->
 <template>
   <div class="cd">
@@ -91,13 +95,6 @@
 
         <line class="leader stg" :x1="480" :y1="138" :x2="480" :y2="154" :style="d2(620)" />
         <text class="dir-lab stg" :x="480" :y="130" text-anchor="middle" :style="d2(650)">the “love” direction</text>
-
-        <text class="cap stg" :x="0" :y="364" :style="d2(700)">{{ CAP[0] }}</text>
-      </g>
-
-      <!-- ---------- click 3: the payoff ---------- -->
-      <g class="beat" :class="{ 'is-on': stage >= 3 }">
-        <text class="cap stg" :x="0" :y="383" :style="d3(0)">{{ CAP[1] }}</text>
       </g>
     </svg>
   </div>
@@ -106,7 +103,7 @@
 <script setup>
 import { C, FONT, VB_W, VB_H } from '../emotionVizTokens.js'
 
-// stage = $clicks (0-3); every visible state is a pure function of it.
+// stage = $clicks (0-2); every visible state is a pure function of it.
 const props = defineProps({ stage: { type: Number, default: 0 } })
 
 /* ---------- staging ----------
@@ -121,7 +118,6 @@ const delay = (on, ms, origin) => ({
 })
 const d1 = (ms, origin) => delay(props.stage >= 1, ms, origin)
 const d2 = (ms) => delay(props.stage >= 2, ms)
-const d3 = (ms) => delay(props.stage >= 3, ms)
 
 /* ---------- the space ----------
    Two clusters, four sentences. The pairs are topic-matched across clusters —
@@ -173,11 +169,6 @@ const arrowStyle = () => ({
     ? 'stroke-dashoffset 520ms cubic-bezier(0.16, 0.84, 0.44, 1) 60ms'
     : 'none',
 })
-
-const CAP = [
-  'Matched pairs — same content, opposite feeling — displace along one shared direction.',
-  'Average many such displacements and you have the concept vector. (This is the whole method, in miniature.)',
-]
 </script>
 
 <style scoped>
@@ -220,12 +211,6 @@ const CAP = [
   font-size: 14px;
   font-weight: 400;
   fill: #5b6472;   /* .wet-sub's colour: this line stands in for that element */
-}
-
-.cap {
-  font-size: 13px;
-  font-weight: 400;
-  fill: v-bind('C.desc');
 }
 
 .cl-lab {
