@@ -1744,9 +1744,9 @@ section: "STUDY 1 · FORAGING"
 <div class="flex justify-center my-2">
   <img src="/figures/02-study1-foraging/fig4B_convergence.png" alt="Felt-to-fitted convergence: appraisal reactivity vs omega_danger" style="max-height: 340px; width: auto;" />
 </div>
-
+<!-- 
 - Confidence reactivity vs **ω_danger** r = −0.40 &nbsp;·&nbsp; anxiety vs **ω_danger** r = +0.33 (disatt. −0.58 / +0.47)
-- Vigor: tracks **threat_vigor specifically** — **silent** on tonic level, value premium, distance
+- Vigor: tracks **threat_vigor specifically** — **silent** on tonic level, value premium, distance -->
 
 <!--
 ★ REHEARSE. S2.11. 1 min.
@@ -1777,7 +1777,6 @@ section: "STUDY 1 · FORAGING"
 </div>
 
 - **g** loads on nearly every item &nbsp;·&nbsp; **Apathy-specific** carried by AMI items &nbsp;·&nbsp; **Anxiety-specific** carried by STAI items
-- Anderson–Rubin scoring → mutually orthogonal
 - Model fit: CFI 0.91, RMSEA 0.057 — better than correlated-two-factor and unidimensional
 
 
@@ -2763,58 +2762,6 @@ layout: academic-content
 section: "STUDY 2 · LLM"
 ---
 
-# Emotion geometry: stability across depth
-
-<div class="flex justify-center my-2">
-  <img src="/figures/03-llm-emotion/cross_layer_rsa.png" alt="Cross-layer representational similarity" style="max-height: 370px; width: auto;" />
-</div>
-
-- Cross-layer RSA: the geometry is **stable across network depth**, not an artifact of one layer
-
-<!--
-Half the answer to "why that layer?" (OQ-20). The full layer sweep for the d*
-shift is F3.B7 — STILL TO RUN.
--->
-
----
-layout: academic-content
-section: "STUDY 2 · LLM"
----
-
-# Where the vector fires in text
-
-<div class="flex justify-center items-center" style="height: 410px;">
-  <img src="/figures/03-llm-emotion/ActivationInText.png" alt="Per-token cosine similarity with the afraid and ashamed vectors across two dialogues" style="max-height: 410px; max-width: 100%; width: auto;" />
-</div>
-
-<!--
-S3.3c. 30 s. The token-level read-out of the same projection.
-
-TAKEAWAY. Projected onto held-out text, the vector fires exactly where a reader
-would say the emotion is — it is not a diffuse topic direction.
-
-SPEAK TO (nothing below is on the slide):
-- Colour is the PER-TOKEN cosine with the emotion vector; the two panels are
-  two different emotions on two unrelated dialogues.
-- TOP (afraid): peaks on "Panic attacks", "Feeling tense", "worrying" — the
-  symptom tokens, not the word "anxiety" in the question.
-- BOTTOM (ashamed): the single darkest token in a conversation about Habsburg
-  Vienna is "embarrassed". The topic is tourism; the direction still finds the
-  affect.
-- This is the qualitative complement to the imminence curve on the previous
-  slide: same projection, read token-by-token instead of averaged.
-
-Q. "Is it just firing on emotion WORDS?"
-→ Partly, and that is expected — but the afraid panel peaks on descriptions of
-  symptoms rather than on the label, and the vectors were built from stories,
-  not from lexicons.
--->
-
----
-layout: academic-content
-section: "STUDY 2 · LLM"
----
-
 # Emotion vector activation across imminence
 
 <div class="flex justify-center items-center" style="height: 410px;">
@@ -3491,6 +3438,19 @@ BLOCKING BEFORE PRODUCTION:
 FIRST CUT IF RUNNING LONG: S1.1, the VR task figure, the F2.9/F2.12 insets.
 NEVER CUT: S2.13 (retention criteria) and the merged S2.15+S2.16 trait slide.
 
+CHANGES 2026-08-18:
+- Moved to backup: "Emotion geometry: stability across depth" (cross-layer RSA)
+  and "Where the vector fires in text" (S3.3c, the per-token read-out). Both sit
+  immediately after "The parallel retellings", so the whole geometry-validation
+  answer is adjacent in backup.
+- CONSEQUENCE 1: the layer question has NO main-deck answer now. "Why that
+  layer?" (OQ-20) was half-answered by the cross-layer slide; reach for it, or
+  say the geometry is stable across depth and offer the slide.
+- CONSEQUENCE 2: the main deck's only evidence that the vector is affective
+  rather than topical is now the imminence curve, which is averaged. The
+  token-level demonstration is the stronger answer and it is in backup — reach
+  for it rather than arguing from the curve.
+
 CHANGES 2026-08-17:
 - Moved to backup: "Why not just neuroscience?" (S3.1c). The "why a language
   model" argument now runs in THREE main-deck slides — functionalist premise,
@@ -4062,6 +4022,70 @@ section: "BACKUP"
 <!--
 Backing for S3.2. Also on disk:
 example_emotion_activating_to_text.png — steering output shown as generated text.
+-->
+
+---
+layout: academic-content
+section: "BACKUP"
+---
+
+# Emotion geometry: stability across depth
+
+<div class="flex justify-center my-2">
+  <img src="/figures/03-llm-emotion/cross_layer_rsa.png" alt="Cross-layer representational similarity" style="max-height: 370px; width: auto;" />
+</div>
+
+- Cross-layer RSA: the geometry is **stable across network depth**, not an artifact of one layer
+
+<!--
+Demoted from the main deck 2026-08-18 (was slide 39). Held for Q&A.
+
+Half the answer to "why that layer?" (OQ-20) — and it is no longer on screen,
+so REACH FOR THIS the moment anyone asks why the vector is read off the layer
+it is read off. The other half, the full layer sweep for the d* shift, is F3.B7
+and is STILL TO RUN.
+
+TAKEAWAY. The similarity structure holds across network depth, so the geometry
+is a property of the representation and not of one arbitrarily chosen layer.
+-->
+
+---
+layout: academic-content
+section: "BACKUP"
+---
+
+# Where the vector fires in text
+
+<div class="flex justify-center items-center" style="height: 410px;">
+  <img src="/figures/03-llm-emotion/ActivationInText.png" alt="Per-token cosine similarity with the afraid and ashamed vectors across two dialogues" style="max-height: 410px; max-width: 100%; width: auto;" />
+</div>
+
+<!--
+Demoted from the main deck 2026-08-18 (was slide 40, S3.3c). Held for Q&A.
+
+The token-level read-out of the same projection. Reach for it when someone
+doubts that the vector is affective rather than topical — this is the most
+concrete answer in the deck.
+
+TAKEAWAY. Projected onto held-out text, the vector fires exactly where a reader
+would say the emotion is — it is not a diffuse topic direction.
+
+SPEAK TO (nothing below is on the slide):
+- Colour is the PER-TOKEN cosine with the emotion vector; the two panels are
+  two different emotions on two unrelated dialogues.
+- TOP (afraid): peaks on "Panic attacks", "Feeling tense", "worrying" — the
+  symptom tokens, not the word "anxiety" in the question.
+- BOTTOM (ashamed): the single darkest token in a conversation about Habsburg
+  Vienna is "embarrassed". The topic is tourism; the direction still finds the
+  affect.
+- This is the qualitative complement to the MAIN-DECK imminence slide (S3.3b):
+  same projection, read token-by-token instead of averaged. Say which slide you
+  mean — it is no longer adjacent to this one.
+
+Q. "Is it just firing on emotion WORDS?"
+→ Partly, and that is expected — but the afraid panel peaks on descriptions of
+  symptoms rather than on the label, and the vectors were built from stories,
+  not from lexicons.
 -->
 
 ---
